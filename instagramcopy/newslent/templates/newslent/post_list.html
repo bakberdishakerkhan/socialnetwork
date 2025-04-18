@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    body {
+        margin: 0;
+        background-color: #f8f8f8;
+        font-family: Arial, sans-serif;
+    }
+
+    .feed-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px 0;
+    }
+
+    .post {
+        background-color: white;
+        margin-bottom: 30px;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .post img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .post-content {
+        padding: 15px;
+    }
+
+    .post-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .post-text {
+        font-size: 16px;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .post-date {
+        font-size: 12px;
+        color: #777;
+    }
+
+    .add-button {
+        display: block;
+        width: fit-content;
+        margin: 20px auto;
+        padding: 10px 20px;
+        background-color: #0095f6;
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .add-button:hover {
+        background-color: #007dc1;
+    }
+</style>
+
+<a href="{% url 'add-new-post' %}" class="add-button">+ Новый пост</a>
+
+<div class="feed-container">
+    {% for post in posts %}
+    <a href="{% url 'details' pid=post.pk %}">
+    <div class="post">
+        {% if post.attachments.all %}
+            <img src="{{ post.attachments.all.0.image.url }}" alt="Post image">
+        {% endif %}
+        
+        <div class="post-content">
+            <div class="post-title">{{ post.title }}</div>
+            <div class="post-text">{{ post.content }}</div>
+            <div class="post-date">{{ post.publication_date }}</div>
+        </div>
+        
+    </div>
+    </a>
+    {% endfor %}
+</div>
+
+{% endblock %}
