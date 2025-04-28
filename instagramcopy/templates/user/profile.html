@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>{{ profile_user.first_name }} {{ profile_user.last_name }}</h2>
+<p>Email: {{ profile_user.email }}</p>
+<p>Телефон: {{ profile_user.phone }}</p>
+
+<p><strong>Подписки:</strong> {{ following_count }}</p>
+<p><strong>Подписчики:</strong> {{ followers_count }}</p>
+
+{% if user.is_authenticated and user != profile_user %}
+    {% if is_following %}
+        <form method="post" action="{% url 'user:toggle_follow' profile_user.id %}">
+            {% csrf_token %}
+            <button type="submit">Отписаться</button>
+        </form>
+    {% else %}
+        <form method="post" action="{% url 'user:toggle_follow' profile_user.id %}">
+            {% csrf_token %}
+            <button type="submit">Подписаться</button>
+        </form>
+    {% endif %}
+{% endif %}
+
+{% endblock %}

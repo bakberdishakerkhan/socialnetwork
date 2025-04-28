@@ -1,0 +1,34 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+<div style="max-width: 600px; margin: 30px auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: Arial, sans-serif; background-color: #fff;">
+
+    <!-- Картинки -->
+    <div style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory;">
+        {% for image in images %}
+            <img src="{{ image.image.url }}" alt="Post Image" style="width: 100%; height: auto; scroll-snap-align: start;">
+        {% endfor %}
+    </div>
+
+    <!-- Контент -->
+    <div style="padding: 20px;">
+        <a href="{% url 'user:profile' post.author.id %}" style="text-decoration: none; color: #007bff;">
+            {{ post.author.first_name }} {{ post.author.last_name }}
+        </a>
+        <h2 style="margin-top: 0;">{{ post.title }}</h2>
+        <p style="font-size: 16px; color: #333;">{{ post.content }}</p>
+        <small style="color: #999;">{{ post.publication_date }}</small>
+    </div>
+
+    <!-- Кнопки действий -->
+    {% if request.user.is_authenticated and request.user == post.author or request.user.is_superuser %}
+    <div style="padding: 10px 20px; display: flex; justify-content: space-between; border-top: 1px solid #eee;">
+        <a href="{% url 'news:edit-post' pid=post.pk %}" style="text-decoration: none; color: #007bff;">✏️ Редактировать</a>
+        <a href="{% url 'news:delete-post' pid=post.pk %}" style="text-decoration: none; color: #dc3545;">🗑️ Удалить</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

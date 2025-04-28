@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 
 from .models import News, PostAttachment
 from .forms import PostForm
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 def newslist(request):
     news = News.objects.all().order_by('-publication_date')
@@ -11,7 +12,7 @@ def postdetails(request, pid):
     news = News.objects.get(pk=pid)
     images = PostAttachment.objects.filter(post_id = pid)
     return render(request, 'newslent/details_page.html', {'post': news, 'images': images})
-
+@login_required
 def addPost(request):
     if request.method != 'POST':
         form = PostForm()
@@ -20,13 +21,13 @@ def addPost(request):
         att = request.FILES.getlist('images')
         if form.is_valid():
             post = form.save(commit=False)
-            # add author to post
+            post.author = request.user 
             post.save()
             for img in att:
                 PostAttachment.objects.create(post_id = post.pk, image=img)
-        return redirect(to='details', pid=post.pk)
+        return redirect(to='news:details', pid=post.pk)
     return render(request, 'newslent/newpost.html', {'form':form})
-
+@login_required
 def editPost(request, pid):
     post = News.objects.get(pk=pid)
     post_att = PostAttachment.objects.filter(post_id=pid)
@@ -47,10 +48,10 @@ def editPost(request, pid):
             post.edited = True
             post.save()
            
-        return redirect(to='details', pid=post.pk)
+        return redirect(to='news:details', pid=post.pk)
     return render(request, 'newslent/editpost.html', {'form':form, "post_att":post_att})
-
+@login_required
 def deletePost(request, pid):
     post = News.objects.get(pk=pid)
     post.delete()
-    return redirect(to='news_list')
+    return redirect(to='news:news_list')

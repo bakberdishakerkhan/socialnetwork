@@ -1,0 +1,43 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Social Network site">
+    <meta name="keywords" content="Social, Network, Posts">
+    <meta name="author" content="Your Name">
+    <title>{% block title %}Our Social Network{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'path_to_your_styles.css' %}">
+</head>
+<body>
+    <header>
+        <a href="/"><h1 style="text-align: center; padding: 20px;">Our Social Network</h1></a>
+
+        <nav style="text-align: center;">
+            <hr>
+            {% if user.is_authenticated %}
+                <span>Привет, {{ user.first_name }} {{ user.last_name }}!</span>
+                <a href="{% url 'user:profile' user.id %}"><button>Профиль</button></a>
+                <a href="{% url 'user:logout' %}"><button>Выйти</button></a>
+            {% else %}
+                <a href="{% url 'user:login' %}"><button>Войти</button></a>
+                <a href="{% url 'user:registr' %}"><button>Регистрация</button></a>
+            {% endif %}
+            <hr>
+        </nav>
+    </header>
+
+    <main style="padding: 20px;">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <hr>
+
+    <footer style="text-align: center; padding: 20px;">
+        <p>© 2025 Our Social Network.</p>
+    </footer>
+</body>
+</html>

@@ -1,9 +1,10 @@
 from django.db import models
 from django.utils import timezone
+from user.models import User
 
 # Create your models here.
 class News(models.Model):
-    # author
+    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор поста')
     title = models.CharField(max_length=20, verbose_name="Заголовок")
     content = models.TextField(verbose_name="Контент")
     publication_date = models.DateTimeField(default=timezone.now, verbose_name="Время публикаций")
