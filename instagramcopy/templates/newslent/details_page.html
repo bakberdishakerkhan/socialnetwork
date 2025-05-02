@@ -1,33 +1,41 @@
-
 {% extends 'base.html' %}
 {% load static %}
 
-
 {% block content %}
-<div style="max-width: 600px; margin: 30px auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: Arial, sans-serif; background-color: #fff;">
+<div class="container" style="max-width: 600px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); overflow: hidden; font-family: Arial, sans-serif;">
 
-    <!-- Картинки -->
+    <!-- Карусель изображений -->
     <div style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory;">
         {% for image in images %}
-            <img src="{{ image.image.url }}" alt="Post Image" style="width: 100%; height: auto; scroll-snap-align: start;">
+            <img src="{{ image.image.url }}" alt="Изображение поста" style="width: 100%; height: auto; scroll-snap-align: start;">
         {% endfor %}
     </div>
 
-    <!-- Контент -->
-    <div style="padding: 20px;">
-        <a href="{% url 'user:profile' post.author.id %}" style="text-decoration: none; color: #007bff;">
+    <!-- Текстовый контент -->
+    <div style="padding: 24px;">
+        <a href="{% url 'user:profile' post.author.id %}" style="font-weight: bold; font-size: 16px; color: #0077cc; text-decoration: none;">
             {{ post.author.first_name }} {{ post.author.last_name }}
         </a>
-        <h2 style="margin-top: 0;">{{ post.title }}</h2>
-        <p style="font-size: 16px; color: #333;">{{ post.content }}</p>
-        <small style="color: #999;">{{ post.publication_date }}</small>
+        <h3 style="margin-top: 10px; font-size: 22px; color: #212529;">{{ post.title }}</h3>
+        <p style="color: #333; font-size: 15px; line-height: 1.6;">{{ post.content }}</p>
+        <p style="font-size: 13px; color: #888; margin-top: 10px;">Опубликовано: {{ post.publication_date }}</p>
     </div>
 
-    <!-- Кнопки действий -->
+    <!-- Лайк и комментарии (без функционала) -->
+    <div style="display: flex; justify-content: space-between; padding: 16px 24px; border-top: 1px solid #eee; background-color: #f9f9f9;">
+        <a href="#" style="color: #0077cc; text-decoration: none; font-weight: bold;">
+            👍 Лайк
+        </a>
+        <a href="#" style="color: #0077cc; text-decoration: none; font-weight: bold;">
+            💬 Комментарии
+        </a>
+    </div>
+
+    <!-- Управление постом -->
     {% if request.user.is_authenticated and request.user == post.author or request.user.is_superuser %}
-    <div style="padding: 10px 20px; display: flex; justify-content: space-between; border-top: 1px solid #eee;">
-        <a href="{% url 'news:edit-post' pid=post.pk %}" style="text-decoration: none; color: #007bff;">✏️ Редактировать</a>
-        <a href="{% url 'news:delete-post' pid=post.pk %}" style="text-decoration: none; color: #dc3545;">🗑️ Удалить</a>
+    <div style="display: flex; justify-content: space-between; padding: 16px 24px; border-top: 1px solid #eee; background-color: #f9f9f9;">
+        <a href="{% url 'news:edit-post' pid=post.pk %}" style="color: #0077cc; text-decoration: none;">✏️ Редактировать</a>
+        <a href="{% url 'news:delete-post' pid=post.pk %}" style="color: #dc3545; text-decoration: none;">🗑️ Удалить</a>
     </div>
     {% endif %}
 </div>

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="max-width: 700px; margin: 40px auto;">
+    <h2 style="text-align: center; color: #0077cc;">Выберите пользователя для чата</h2>
+    
+    <ul style="list-style: none; padding: 0; margin-top: 30px;">
+        {% for user in users %}
+            <li style="margin-bottom: 15px;">
+                <a href="{% url 'chat:chat_view' other_user_id=user.id %}" 
+                   style="display: block; background-color: #f1f9ff; padding: 15px 20px; border-radius: 10px; text-decoration: none; color: #0077cc; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: background-color 0.3s;">
+                    💬 {{ user.first_name }} {{ user.last_name }}
+                </a>
+            </li>
+        {% empty %}
+            <li style="text-align: center; color: #6c757d;">Нет доступных пользователей.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

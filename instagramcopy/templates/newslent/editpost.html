@@ -8,22 +8,22 @@
         {% csrf_token %}
 
         <div>
-            <label for="title" style="font-weight: bold;">Заголовок</label>
+            <label for="title" style="font-weight: bold; color: #333;">Заголовок</label>
             {{ form.title }}
         </div>
 
         <div>
-            <label for="content" style="font-weight: bold;">Контент</label>
+            <label for="content" style="font-weight: bold; color: #333;">Контент</label>
             {{ form.content }}
         </div>
 
         <div>
-            <label for="images" style="font-weight: bold;">Добавить картинки</label>
+            <label for="images" style="font-weight: bold; color: #333;">Добавить картинки</label>
             {{ form.images }}
         </div>
 
         <div>
-            <p style="font-weight: bold; margin-bottom: 10px;">Удалить текущие изображения:</p>
+            <p style="font-weight: bold; margin-bottom: 10px; color: #333;">Удалить текущие изображения:</p>
             <div style="display: flex; flex-wrap: wrap; gap: 10px;">
                 {% for img in post_att %}
                     <div style="position: relative; display: inline-block;">

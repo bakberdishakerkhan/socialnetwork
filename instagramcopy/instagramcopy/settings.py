@@ -28,6 +28,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",  
+    },
+}
+
 
 # Application definition
 
@@ -40,7 +46,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'newslent',
     'user',
+    'channels',
+    'chat',
+    'widget_tweaks',
 ]
+
+ASGI_APPLICATION = 'instagramcopy.asgi.application'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -1,9 +1,19 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% if is_active %}
-<p>Поздравляю с активацией аккаунта! Теперь вы можете авторизоватся!</p>
-{% else %}
-<p>Время активаций аккаунта истекло. Пройдите регистрацию заново.</p>
-{% endif %}
+<div class="container" style="max-width: 500px; margin: 100px auto; background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06); text-align: center;">
+
+    {% if is_active %}
+        <h3 style="color: #28a745; margin-bottom: 20px;">Аккаунт активирован!</h3>
+        <p style="font-size: 16px; color: #333;">
+            Поздравляем! Теперь вы можете <a href="{% url 'user:login' %}" style="color: #0077cc;">войти в аккаунт</a>.
+        </p>
+    {% else %}
+        <h3 style="color: #dc3545; margin-bottom: 20px;">Срок активации истёк</h3>
+        <p style="font-size: 16px; color: #333;">
+            Ссылка устарела или срок активации истёк. Пожалуйста, <a href="{% url 'user:registr' %}" style="color: #0077cc;">зарегистрируйтесь заново</a>.
+        </p>
+    {% endif %}
+
+</div>
 {% endblock %}

@@ -1,21 +1,26 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="text-center">Авторизация</h2>
+<div class="container" style="max-width: 400px; margin: 60px auto; background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);">
+    <h2 class="text-center" style="color: #0077cc;">Вход в аккаунт</h2>
+    
     <form method="post" class="mt-4">
         {% csrf_token %}
+
         <div class="mb-3">
-            <label for="id_email" class="form-label">Почта</label>
-            {{ form.email }}           
+            <label for="id_email" class="form-label" style="font-weight: 500;">Почта</label>
+            {{ form.email|add_class:"form-control" }}
         </div>
+
         <div class="mb-3">
-            <label for="password-input" class="form-label">Пароль</label>
-            {{ form.password }}
+            <label for="id_password" class="form-label" style="font-weight: 500;">Пароль</label>
+            {{ form.password|add_class:"form-control" }}
         </div>
-        <button type="submit" class="btn btn-primary w-100">Войти</button>
+
+        <button type="submit" class="btn btn-primary w-100" style="background-color: #0077cc; border: none;">Войти</button>
     </form>
 </div>
 {% endblock %}
-
-

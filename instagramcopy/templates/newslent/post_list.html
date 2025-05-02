@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
-{% block content %}
 
+{% block content %}
 <style>
     body {
         margin: 0;
@@ -10,16 +10,16 @@
 
     .feed-container {
         max-width: 600px;
-        margin: 0 auto;
-        padding: 20px 0;
+        margin: 40px auto;
+        padding: 20px;
     }
 
     .post {
         background-color: white;
         margin-bottom: 30px;
-        border-radius: 10px;
+        border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
     }
 
     .post img {
@@ -29,24 +29,27 @@
     }
 
     .post-content {
-        padding: 15px;
+        padding: 24px;
     }
 
     .post-title {
-        font-size: 20px;
+        font-size: 22px;
         font-weight: bold;
         margin-bottom: 10px;
+        color: #212529;
     }
 
     .post-text {
-        font-size: 16px;
+        font-size: 15px;
         color: #333;
+        line-height: 1.6;
         margin-bottom: 10px;
     }
 
     .post-date {
-        font-size: 12px;
-        color: #777;
+        font-size: 13px;
+        color: #888;
+        margin-top: 10px;
     }
 
     .add-button {
@@ -64,30 +67,32 @@
     .add-button:hover {
         background-color: #007dc1;
     }
+
 </style>
+
 {% if user.is_authenticated %}
-
-
-<a href="{% url 'news:add-new-post' %}" class="add-button">+ Новый пост</a>
+    <a href="{% url 'news:add-new-post' %}" class="add-button">+ Новый пост</a>
 {% endif %}
 
 <div class="feed-container">
     {% for post in posts %}
-    <a href="{% url 'news:details' pid=post.pk %}">
-    <div class="post">
-        {% if post.attachments.all %}
-            <img src="{{ post.attachments.all.0.image.url }}" alt="Post image">
-        {% endif %}
-        
-        <div class="post-content">
-            <div class="post-title">{{ post.title }}</div>
-            <div class="post-text">{{ post.content }}</div>
-            <div class="post-date">{{ post.publication_date }}</div>
-        </div>
-        
-    </div>
-    </a>
+        <a href="{% url 'news:details' pid=post.pk %}">
+            <div class="post">
+                {% if post.attachments.all %}
+                    <div style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory;">
+                        {% for image in post.attachments.all %}
+                            <img src="{{ image.image.url }}" alt="Post image" style="width: 100%; height: auto; scroll-snap-align: start;">
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                <div class="post-content">
+                    <div class="post-title">{{ post.title }}</div>
+                    <div class="post-text">{{ post.content }}</div>
+                    <div class="post-date">{{ post.publication_date }}</div>
+                </div>
+            </div>
+        </a>
     {% endfor %}
 </div>
-
 {% endblock %}

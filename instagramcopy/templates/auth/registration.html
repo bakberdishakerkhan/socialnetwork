@@ -1,17 +1,46 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 
 {% block content %}
-<div>
-    <h2>Регистрация</h2>
-    <form method="post">
+<div class="container" style="max-width: 500px; margin: 60px auto; background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);">
+    <h2 class="text-center" style="color: #0077cc;">Регистрация</h2>
+
+    <form method="post" class="mt-4">
         {% csrf_token %}
-        {{form.first_name}}
-        {{form.last_name}}
-        {{form.email}}
-        {{form.phone}}
-        {{form.password1}}
-        {{form.password2}}
-        <button type="submit">Зарегистрироваться</button>
+
+        <div class="mb-3">
+            <label class="form-label">Имя</label>
+            {{ form.first_name|add_class:"form-control" }}
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Фамилия</label>
+            {{ form.last_name|add_class:"form-control" }}
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Почта</label>
+            {{ form.email|add_class:"form-control" }}
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Телефон</label>
+            {{ form.phone|add_class:"form-control" }}
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Пароль</label>
+            {{ form.password1|add_class:"form-control" }}
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Повторите пароль</label>
+            {{ form.password2|add_class:"form-control" }}
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100" style="background-color: #0077cc; border: none;">
+            Зарегистрироваться
+        </button>
     </form>
 </div>
 {% endblock %}

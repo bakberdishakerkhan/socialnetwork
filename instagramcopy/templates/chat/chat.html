@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+<div class="chat-container" style="max-width: 800px; margin: 40px auto; padding: 25px; background: white; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.05);">
+    <h2 style="text-align: center; color: #0077cc; margin-bottom: 25px;">
+        Чат с {{ other_user.get_full_name|default:other_user.username }}
+    </h2>
+
+    <div id="chat-messages" class="chat-box">
+        <!-- Messages will appear here -->
+    </div>
+
+    <div class="chat-input">
+        <input type="text" id="message-input" placeholder="Введите сообщение..." />
+        <button id="send-btn" title="Отправить">
+            <img src="{% static 'img/paper-plane.png' %}" alt="Отправить" />
+        </button>
+    </div>
+</div>
+
+<style>
+    .chat-box {
+        height: 500px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        padding: 20px;
+        background-color: #f9fcff;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    .chat-input {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .chat-input input {
+        flex: 1;
+        padding: 10px 15px;
+        border-radius: 30px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+        outline: none;
+    }
+
+    .chat-input button {
+        background-color: #0077cc;
+        border: none;
+        padding: 10px 14px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.3s ease;
+    }
+
+    .chat-input button:hover {
+        background-color: #005fa3;
+    }
+
+    .chat-input img {
+        width: 20px;
+        height: 20px;
+        filter: brightness(0) invert(1);
+    }
+
+    .message-container {
+        margin-bottom: 16px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .message-header {
+        font-weight: bold;
+        font-size: 0.9rem;
+        margin-bottom: 3px;
+        color: #555;
+    }
+
+    .message-bubble {
+        max-width: 70%;
+        padding: 12px 16px;
+        border-radius: 20px;
+        word-break: break-word;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    .my-message {
+        align-items: flex-end;
+    }
+
+    .my-message .message-bubble {
+        background-color: #0077cc;
+        color: white;
+        border-bottom-right-radius: 4px;
+    }
+
+    .other-message {
+        align-items: flex-start;
+    }
+
+    .other-message .message-bubble {
+        background-color: #e6f0fa;
+        color: #333;
+        border-bottom-left-radius: 4px;
+    }
+
+    .message-time {
+        font-size: 0.75rem;
+        color: #888;
+        margin-top: 4px;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const userId = {{ user.id }};
+    const chatMessagesDiv = document.getElementById("chat-messages");
+    const messageInput = document.getElementById("message-input");
+    const sendBtn = document.getElementById("send-btn");
+
+    const wsScheme = window.location.protocol === "https:" ? "wss://" : "ws://";
+    const wsPath = wsScheme + window.location.host + "/ws/chat/" + userId + "/{{ other_user.id }}/";
+    const chatSocket = new WebSocket(wsPath);
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const isMyMessage = data.sender_id == userId;
+
+        const messageContainer = document.createElement('div');
+        messageContainer.className = `message-container ${isMyMessage ? 'my-message' : 'other-message'}`;
+
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'message-header';
+        headerDiv.textContent = isMyMessage ? 'Вы' : (data.sender_name || 'Собеседник');
+        messageContainer.appendChild(headerDiv);
+
+        const bubbleDiv = document.createElement('div');
+        bubbleDiv.className = 'message-bubble';
+        bubbleDiv.textContent = data.message;
+        messageContainer.appendChild(bubbleDiv);
+
+        if (data.timestamp) {
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'message-time';
+            timeDiv.textContent = formatTime(data.timestamp);
+            messageContainer.appendChild(timeDiv);
+        }
+
+        chatMessagesDiv.appendChild(messageContainer);
+        chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+    };
+
+    function formatTime(timestamp) {
+        const date = new Date(timestamp);
+        return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    }
+
+    function sendMessage() {
+        const message = messageInput.value.trim();
+        if (message && chatSocket.readyState === WebSocket.OPEN) {
+            chatSocket.send(JSON.stringify({'message': message}));
+            messageInput.value = '';
+        }
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    messageInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') sendMessage();
+    });
+});
+</script>
+{% endblock %}

@@ -5,38 +5,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Social Network site">
-    <meta name="keywords" content="Social, Network, Posts">
-    <meta name="author" content="Your Name">
-    <title>{% block title %}Our Social Network{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'path_to_your_styles.css' %}">
+    <title>{% block title %}SBN{% endblock %}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f9fb;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #0077cc;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-actions a img,
+        .header-actions button img {
+            width: 28px;
+            height: 28px;
+            filter: brightness(0) invert(1);
+            transition: transform 0.2s ease;
+        }
+
+        .header-actions a img:hover,
+        .header-actions button img:hover {
+            transform: scale(1.1);
+        }
+
+        .header-actions form {
+            display: inline;
+            margin: 0;
+        }
+
+        .header-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        nav {
+            background-color: #e6f0fa;
+            padding: 12px;
+            text-align: center;
+        }
+
+        nav a {
+            margin: 0 10px;
+            text-decoration: none;
+        }
+
+        nav button {
+            background-color: #0077cc;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        nav button:hover {
+            background-color: #005fa3;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        footer {
+            background-color: #e6f0fa;
+            text-align: center;
+            padding: 15px;
+            margin-top: 40px;
+            color: #333;
+        }
+
+        .greeting {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-actions {
+                margin-top: 10px;
+                flex-direction: row;
+                justify-content: flex-end;
+                width: 100%;
+            }
+        }
+        .divider {
+            width: 1px;
+            height: 24px;
+            background-color: rgba(255, 255, 255, 0.5);
+        }   
+
+    </style>
 </head>
 <body>
     <header>
-        <a href="/"><h1 style="text-align: center; padding: 20px;">Our Social Network</h1></a>
-
-        <nav style="text-align: center;">
-            <hr>
+        <a href="/" style="text-decoration: none; color: white;">
+            <h1>SBN</h1>
+        </a>
+        <div class="header-actions">
+            <a href="{% url 'chat:select_user' %}" title="Чат">
+                <img src="{% static 'img/chat-icon.png' %}" alt="Чат">
+            </a>
+    
+            <div class="divider"></div>
+    
             {% if user.is_authenticated %}
-                <span>Привет, {{ user.first_name }} {{ user.last_name }}!</span>
-                <a href="{% url 'user:profile' user.id %}"><button>Профиль</button></a>
-                <a href="{% url 'user:logout' %}"><button>Выйти</button></a>
+                <a href="{% url 'user:profile' user.id %}" title="Профиль">
+                    <img src="{% static 'img/profile-icon.png' %}" alt="Профиль">
+                </a>
+    
+                <div class="divider"></div>
+    
+                <form action="{% url 'user:logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" title="Выйти">
+                        <img src="{% static 'img/cross-small.png' %}" alt="Выйти">
+                    </button>
+                </form>
             {% else %}
-                <a href="{% url 'user:login' %}"><button>Войти</button></a>
-                <a href="{% url 'user:registr' %}"><button>Регистрация</button></a>
+                <a href="{% url 'user:login' %}" title="Войти">
+                    <img src="{% static 'img/profile-icon.png' %}" alt="Войти">
+                </a>
             {% endif %}
-            <hr>
-        </nav>
+        </div>
     </header>
+    
 
-    <main style="padding: 20px;">
+    <nav>
+        {% if user.is_authenticated %}
+            <span class="greeting">Привет, {{ user.first_name }} {{ user.last_name }}!</span>
+        {% else %}
+            <a href="{% url 'user:login' %}"><button>Войти</button></a>
+            <a href="{% url 'user:registr' %}"><button>Регистрация</button></a>
+        {% endif %}
+    </nav>
+
+    <main>
         {% block content %}
         {% endblock %}
     </main>
 
-    <hr>
-
-    <footer style="text-align: center; padding: 20px;">
+    <footer>
         <p>© 2025 Our Social Network.</p>
     </footer>
 </body>

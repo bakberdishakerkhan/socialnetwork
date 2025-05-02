@@ -1,5 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-На вашу почту {{email}} было отправлено сообщение для активации!
+<div class="container" style="max-width: 500px; margin: 100px auto; background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06); text-align: center;">
+    <h3 style="color: #0077cc; margin-bottom: 20px;">Письмо отправлено</h3>
+    <p style="font-size: 16px; color: #333;">
+        На вашу почту <strong>{{ email }}</strong> было отправлено сообщение для активации аккаунта.
+        <br><br>
+        Пожалуйста, проверьте почтовый ящик и следуйте инструкциям в письме.
+    </p>
+</div>
 {% endblock %}

@@ -1,25 +1,39 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>{{ profile_user.first_name }} {{ profile_user.last_name }}</h2>
-<p>Email: {{ profile_user.email }}</p>
-<p>Телефон: {{ profile_user.phone }}</p>
+<div style="max-width: 600px; margin: auto; padding: 2rem; border: 1px solid #ddd; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+    <div style="text-align: center;">
+        <h2 style="margin-bottom: 0.5rem;">{{ profile_user.first_name }} {{ profile_user.last_name }}</h2>
+        <p style="color: #555;">{{ profile_user.email }}</p>
+        <p style="color: #555;">Телефон: {{ profile_user.phone }}</p>
+    </div>
 
-<p><strong>Подписки:</strong> {{ following_count }}</p>
-<p><strong>Подписчики:</strong> {{ followers_count }}</p>
+    <div style="display: flex; justify-content: space-around; margin-top: 1rem;">
+        <div>
+            <strong>{{ followers_count }}</strong>
+            <p style="margin: 0; font-size: 0.9rem; color: #666;">Подписчики</p>
+        </div>
+        <div>
+            <strong>{{ following_count }}</strong>
+            <p style="margin: 0; font-size: 0.9rem; color: #666;">Подписки</p>
+        </div>
+    </div>
 
-{% if user.is_authenticated and user != profile_user %}
-    {% if is_following %}
-        <form method="post" action="{% url 'user:toggle_follow' profile_user.id %}">
+    {% if user.is_authenticated and user != profile_user %}
+    <div style="margin-top: 2rem; text-align: center;">
+        <form method="post" action="{% url 'user:toggle_follow' profile_user.id %}" style="display: inline;">
             {% csrf_token %}
-            <button type="submit">Отписаться</button>
+            <button type="submit" style="background-color: {% if is_following %}#f44336{% else %}#4CAF50{% endif %}; color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 5px; cursor: pointer;">
+                {% if is_following %}Отписаться{% else %}Подписаться{% endif %}
+            </button>
         </form>
-    {% else %}
-        <form method="post" action="{% url 'user:toggle_follow' profile_user.id %}">
-            {% csrf_token %}
-            <button type="submit">Подписаться</button>
-        </form>
+
+        <a href="{% url 'chat:chat_view' other_user_id=profile_user.id %}" style="margin-left: 1rem;">
+            <button style="background-color: #2196F3; color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 5px; cursor: pointer;">
+                Написать сообщение
+            </button>
+        </a>
+    </div>
     {% endif %}
-{% endif %}
-
+</div>
 {% endblock %}
