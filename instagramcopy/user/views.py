@@ -40,7 +40,7 @@ def registration(request):
             user.save()
             print(f'Пользователь {user.email} сохранён')
 
-            # Отправка письма
+            # send email
             to_email = email_address
             mail_subject = 'Ссылка на активацию аккаунта'
             message = render_to_string('auth/acc_active_email.html', {
@@ -96,9 +96,9 @@ def profile_view(request, user_id):
     
     is_following = Follow.objects.filter(follower=request.user, following=profile_user).exists()
     
-    # Подсчет подписок и подписчиков
-    following_count = Follow.objects.filter(follower=profile_user).count()  # Количество подписок
-    followers_count = Follow.objects.filter(following=profile_user).count()  # Количество подписчиков
+    # follower
+    following_count = Follow.objects.filter(follower=profile_user).count()  
+    followers_count = Follow.objects.filter(following=profile_user).count()  
 
     return render(request, 'user/profile.html', {
         'profile_user': profile_user,
