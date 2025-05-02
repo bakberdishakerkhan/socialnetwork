@@ -59,3 +59,10 @@ class UserLoginForm(forms.Form):
             raise forms.ValidationError('Неверный почта или пароль') 
         return self.cleaned_data
      
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['avatar', 'bio']
+        widgets = {
+            'bio': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Напишите о себе'}),
+        }

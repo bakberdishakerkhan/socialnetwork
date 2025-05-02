@@ -1,11 +1,36 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
 <div style="max-width: 600px; margin: auto; padding: 2rem; border: 1px solid #ddd; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
     <div style="text-align: center;">
+        <!-- Аватарка -->
+        {% if profile_user.avatar %}
+            <img src="{{ profile_user.avatar.url }}" alt="avatar" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem;">
+        {% endif %}
+
         <h2 style="margin-bottom: 0.5rem;">{{ profile_user.first_name }} {{ profile_user.last_name }}</h2>
         <p style="color: #555;">{{ profile_user.email }}</p>
         <p style="color: #555;">Телефон: {{ profile_user.phone }}</p>
+
+        <!-- О себе -->
+        {% if profile_user.bio %}
+            <div style="margin-top: 1rem; padding: 1rem; background-color: #f9f9f9; border-radius: 8px; color: #333;">
+                <strong>О себе:</strong>
+                <p style="margin-top: 0.5rem;">{{ profile_user.bio }}</p>
+            </div>
+        {% endif %}
+
+        <!-- Кнопка редактирования -->
+        {% if user.is_authenticated and user == profile_user %}
+            <div style="margin-top: 1rem;">
+                <a href="{% url 'user:edit_profile' %}">
+                    <button style="background-color: #555; color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 5px; cursor: pointer;">
+                        ✏️ Редактировать профиль
+                    </button>
+                </a>
+            </div>
+        {% endif %}
     </div>
 
     <div style="display: flex; justify-content: space-around; margin-top: 1rem;">
@@ -36,4 +61,36 @@
     </div>
     {% endif %}
 </div>
+
+<hr style="margin: 2rem 0;">
+<h3 style="text-align: center;">Посты пользователя</h3>
+
+{% if posts %}
+<div style="display: flex; flex-direction: column; gap: 1.5rem; margin-top: 1rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+    {% for post in posts %}
+    <a href="{% url 'news:details' post.id %}" style="text-decoration: none; color: inherit;">
+        <div style="border: 1px solid #ccc; border-radius: 8px; padding: 1rem;">
+            <h4>{{ post.title }}</h4>
+            <p>{{ post.content|truncatewords:25 }}</p>
+            <small style="color: #888;">Опубликовано: {{ post.publication_date }}</small>
+    
+            <div style="margin-top: 0.5rem; font-size: 0.9rem; color: #555;">
+                ❤️ {{ post.likes.count }} лайков | 💬 {{ post.comments.count }} комментариев
+            </div>
+    
+            {% if post.attachments.all %}
+            <div style="margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                {% for attachment in post.attachments.all %}
+                <img src="{{ attachment.image.url }}" alt="{{ attachment.name }}" style="max-width: 100px; max-height: 100px; border-radius: 4px;">
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<p style="text-align: center; color: #666;">Этот пользователь пока ничего не опубликовал.</p>
+{% endif %}
+
 {% endblock %}

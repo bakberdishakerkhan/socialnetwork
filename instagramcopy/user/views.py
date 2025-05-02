@@ -11,6 +11,9 @@ from django.template.loader import render_to_string
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
+from newslent.models import News
+from .forms import UserProfileForm
+
 
 # Create your views here.
 
@@ -91,21 +94,26 @@ def user_logout(request):
 
 
 @login_required
+@login_required
 def profile_view(request, user_id):
     profile_user = get_object_or_404(User, id=user_id)
-    
+    posts = News.objects.filter(author=profile_user).prefetch_related('likes', 'comments', 'attachments')
+
     is_following = Follow.objects.filter(follower=request.user, following=profile_user).exists()
-    
-    # follower
-    following_count = Follow.objects.filter(follower=profile_user).count()  
-    followers_count = Follow.objects.filter(following=profile_user).count()  
+
+    following_count = Follow.objects.filter(follower=profile_user).count()
+    followers_count = Follow.objects.filter(following=profile_user).count()
+
+    user_posts = News.objects.filter(author=profile_user).order_by('-publication_date')
 
     return render(request, 'user/profile.html', {
         'profile_user': profile_user,
         'is_following': is_following,
         'following_count': following_count,
-        'followers_count': followers_count
+        'followers_count': followers_count,
+        'posts': user_posts,
     })
+
 
 @require_POST
 @login_required
@@ -113,13 +121,23 @@ def toggle_follow(request, user_id):
     profile_user = get_object_or_404(User, id=user_id)
 
     if Follow.objects.filter(follower=request.user, following=profile_user).exists():
-        # Отписка
+        # 
         Follow.objects.filter(follower=request.user, following=profile_user).delete()
     else:
-        # Подписка
+        # 
         Follow.objects.get_or_create(follower=request.user, following=profile_user)
 
     return redirect('user:profile', user_id=profile_user.id)
 
 
-
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('user:profile', user_id=request.user.id)
+    else:
+        form = UserProfileForm(instance=request.user)
+    
+    return render(request, 'user/edit_profile.html', {'form': form})

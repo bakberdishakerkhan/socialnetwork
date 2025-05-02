@@ -21,14 +21,49 @@
         <p style="font-size: 13px; color: #888; margin-top: 10px;">Опубликовано: {{ post.publication_date }}</p>
     </div>
 
-    <!-- Лайк и комментарии (без функционала) -->
-    <div style="display: flex; justify-content: space-between; padding: 16px 24px; border-top: 1px solid #eee; background-color: #f9f9f9;">
-        <a href="#" style="color: #0077cc; text-decoration: none; font-weight: bold;">
-            👍 Лайк
-        </a>
-        <a href="#" style="color: #0077cc; text-decoration: none; font-weight: bold;">
-            💬 Комментарии
-        </a>
+    <!-- Лайк и комментарии -->
+    <div style="padding: 0 24px 24px 24px;">
+        <!-- Лайк -->
+        {% if request.user.is_authenticated %}
+            <form method="post" action="{% url 'news:like-post' post.id %}">
+                {% csrf_token %}
+                <button type="submit" style="background: none; border: none; color: #0077cc; font-weight: bold; cursor: pointer;">
+                    {% if is_liked %}
+                        👎 Убрать лайк
+                    {% else %}
+                        👍 Лайк
+                    {% endif %}
+                </button>
+                <span style="margin-left: 10px; color: #555;">{{ post.likes.count }} лайков</span>
+            </form>
+        {% else %}
+            <p><a href="{% url 'user:login' %}">Войдите</a>, чтобы поставить лайк.</p>
+        {% endif %}
+    </div>
+
+    <!-- Комментарии -->
+    <div style="padding: 0 24px 24px 24px;">
+        <h4 style="margin-bottom: 10px;">Комментарии ({{ post.comments.count }})</h4>
+        <ul style="list-style: none; padding: 0; max-height: 200px; overflow-y: auto;">
+            {% for comment in post.comments.all %}
+                <li style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 6px;">
+                    <strong>{{ comment.user.first_name }}</strong>: {{ comment.text }}<br>
+                    <small style="color: #888;">{{ comment.created_at }}</small>
+                </li>
+            {% empty %}
+                <li>Пока нет комментариев.</li>
+            {% endfor %}
+        </ul>
+
+        {% if request.user.is_authenticated %}
+        <form method="post" action="{% url 'news:add-comment' post.id %}" style="margin-top: 12px;">
+            {% csrf_token %}
+            <textarea name="comment" rows="3" style="width: 100%; border: 1px solid #ccc; border-radius: 6px; padding: 8px;" placeholder="Напишите комментарий..."></textarea>
+            <button type="submit" style="margin-top: 8px; background-color: #4CAF50; color: white; border: none; padding: 6px 12px; border-radius: 5px;">Добавить</button>
+        </form>
+        {% else %}
+            <p><a href="{% url 'user:login' %}">Войдите</a>, чтобы комментировать.</p>
+        {% endif %}
     </div>
 
     <!-- Управление постом -->

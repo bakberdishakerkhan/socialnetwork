@@ -10,6 +10,8 @@ class User(AbstractUser):
     email = models.EmailField(unique=True, verbose_name='Почта')
     phone = models.CharField(blank=True, max_length=15, verbose_name='Номер телефона')
     password = models.CharField(max_length=128, verbose_name='Пароль')
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True, verbose_name='Аватарка')
+    bio = models.TextField(blank=True, null=True, verbose_name='О себе')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']

@@ -1,8 +1,9 @@
-from django.shortcuts import render, redirect
-
-from .models import News, PostAttachment
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import News, PostAttachment, Like, Comment  
 from .forms import PostForm
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+
 # Create your views here.
 def newslist(request):
     news = News.objects.all().order_by('-publication_date')
@@ -10,8 +11,9 @@ def newslist(request):
 
 def postdetails(request, pid):
     news = News.objects.get(pk=pid)
-    images = PostAttachment.objects.filter(post_id = pid)
+    images = PostAttachment.objects.filter(post_id=pid)
     return render(request, 'newslent/details_page.html', {'post': news, 'images': images})
+
 @login_required
 def addPost(request):
     if request.method != 'POST':
@@ -27,6 +29,7 @@ def addPost(request):
                 PostAttachment.objects.create(post_id = post.pk, image=img)
         return redirect(to='news:details', pid=post.pk)
     return render(request, 'newslent/newpost.html', {'form':form})
+
 @login_required
 def editPost(request, pid):
     post = News.objects.get(pk=pid)
@@ -50,8 +53,27 @@ def editPost(request, pid):
            
         return redirect(to='news:details', pid=post.pk)
     return render(request, 'newslent/editpost.html', {'form':form, "post_att":post_att})
+
 @login_required
 def deletePost(request, pid):
     post = News.objects.get(pk=pid)
     post.delete()
     return redirect(to='news:news_list')
+
+@require_POST
+@login_required
+def like_post(request, post_id):
+    post = get_object_or_404(News, pk=post_id)
+    like, created = Like.objects.get_or_create(user=request.user, post=post)
+    if not created:
+        like.delete()  
+    return redirect('news:details', pid=post_id)  
+
+@require_POST
+@login_required
+def add_comment(request, post_id):
+    post = get_object_or_404(News, pk=post_id)
+    text = request.POST.get('comment')
+    if text:
+        Comment.objects.create(user=request.user, post=post, text=text)
+    return redirect('news:details', pid=post_id)  
