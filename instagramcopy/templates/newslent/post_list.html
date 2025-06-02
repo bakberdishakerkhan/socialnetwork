@@ -2,30 +2,95 @@
 
 {% block content %}
 <style>
+    /* Global styles (assuming these are in base.html or a global CSS file) */
+    :root {
+        --color-background: #0d0d0d;
+        --color-card-bg: rgba(20, 20, 30, 0.85); /* Corrected alpha value */
+        --color-accent-purple: #8A2BE2; /* BlueViolet */
+        --color-accent-light-purple: #AA70FF; /* Lighter purple */
+        --color-text-white: #f0f0f0;
+        --color-text-light-grey: #ccc;
+        --color-divider-bg: rgba(138, 43, 226, 0.2); /* Lighter, subtle divider */
+
+        --shadow-deep: 0 5px 15px rgba(0, 0, 0, 0.6);
+        --neon-glow-purple: 0 0 10px rgba(138, 43, 226, 0.7);
+        --text-glow-white: 0 0 8px rgba(255, 255, 255, 0.2);
+
+        /* Fonts (make sure these are imported or available) */
+        --font-primary: 'Roboto', sans-serif;
+        --font-heading: 'Montserrat', sans-serif;
+    }
+
     body {
         margin: 0;
-        background-color: #f8f8f8;
-        font-family: Arial, sans-serif;
+        background-color: var(--color-background);
+        font-family: var(--font-primary);
+        color: var(--color-text-white);
     }
 
     .feed-container {
-        max-width: 600px;
+        max-width: 800px;
         margin: 40px auto;
         padding: 20px;
     }
 
     .post {
-        background-color: white;
-        margin-bottom: 30px;
-        border-radius: 12px;
+        background: var(--color-card-bg); /* Now directly using the variable */
+        border: 1px solid var(--color-accent-purple); /* Consistent border */
+        border-radius: 16px; /* Consistent border-radius */
         overflow: hidden;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        margin-bottom: 40px;
+        box-shadow: var(--shadow-deep), var(--neon-glow-purple); /* Consistent shadow */
+        backdrop-filter: blur(8px);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .post img {
-        width: 100%;
-        height: auto;
-        display: block;
+    .post:hover {
+        transform: translateY(-5px); /* Lift slightly on hover */
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8), 0 0 25px var(--color-accent-light-purple); /* Enhanced glow on hover */
+    }
+
+    /* Scrollable gallery inside a post (consistent with details page carousel) */
+    .image-gallery {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 12px 12px 0 0; /* Rounded top corners */
+        overflow-y: hidden; /* Hide vertical scrollbar */
+        position: relative;
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        padding-bottom: 5px; /* Space for a subtle scrollbar */
+        background-color: rgba(0, 0, 0, 0.2); /* Slightly darker background for image section */
+    }
+
+    /* Custom scrollbar for image gallery */
+    .image-gallery::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .image-gallery::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+
+    .image-gallery::-webkit-scrollbar-thumb {
+        background-color: rgba(138, 43, 226, 0.5);
+        border-radius: 10px;
+        border: 1px solid rgba(138, 43, 226, 0.7);
+    }
+
+    .image-gallery::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(170, 112, 255, 0.8);
+    }
+
+    .image-gallery img {
+        flex-shrink: 0;
+        width: 100%; /* Image takes full width of the visible gallery area */
+        height: 250px; /* Consistent height for feed preview */
+        object-fit: cover;
+        scroll-snap-align: center;
+        border-bottom: 1px solid rgba(138, 43, 226, 0.2); /* Subtle divider */
     }
 
     .post-content {
@@ -33,59 +98,86 @@
     }
 
     .post-title {
-        font-size: 22px;
+        font-family: var(--font-heading);
+        font-size: 26px; /* Slightly larger */
         font-weight: bold;
-        margin-bottom: 10px;
-        color: #212529;
+        color: var(--color-accent-light-purple); /* Consistent purple */
+        margin-bottom: 12px;
+        text-shadow: var(--neon-glow-purple); /* Consistent text glow */
+        transition: color 0.3s ease, text-shadow 0.3s ease;
+    }
+
+    .post-title:hover {
+        color: var(--color-text-white);
+        text-shadow: var(--text-glow-white);
     }
 
     .post-text {
-        font-size: 15px;
-        color: #333;
+        font-size: 16px;
+        color: var(--color-text-light-grey); /* Consistent light grey */
         line-height: 1.6;
-        margin-bottom: 10px;
+        /* Optionally truncate text for feed if it's too long */
+        display: -webkit-box;
+        -webkit-line-clamp: 3; /* Show up to 3 lines */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .post-date {
+        margin-top: 14px;
         font-size: 13px;
-        color: #888;
-        margin-top: 10px;
+        color: #B0B0B0; /* Consistent softer grey for date */
+        font-style: italic;
     }
 
     .add-button {
         display: block;
         width: fit-content;
         margin: 20px auto;
-        padding: 10px 20px;
-        background-color: #0095f6;
-        color: white;
-        border-radius: 8px;
-        text-decoration: none;
+        padding: 12px 24px;
+        background: linear-gradient(90deg, var(--color-accent-purple), var(--color-accent-light-purple)); /* Consistent gradient */
+        color: var(--color-text-white);
+        border: none; /* Removed border */
+        border-radius: 10px; /* Consistent border-radius */
         font-weight: bold;
+        text-decoration: none;
+        box-shadow: 0 0 12px rgba(170, 112, 255, 0.5); /* Consistent shadow */
+        transition: background 0.3s, box-shadow 0.3s, transform 0.2s ease;
+        text-transform: uppercase; /* Consistent text styling */
+        letter-spacing: 1px;
     }
 
     .add-button:hover {
-        background-color: #007dc1;
+        background: linear-gradient(90deg, var(--color-accent-light-purple), var(--color-accent-purple));
+        box-shadow: 0 0 18px rgba(170, 112, 255, 0.7), 0 0 25px rgba(138, 43, 226, 0.6); /* Enhanced hover glow */
+        transform: translateY(-3px); /* Lift on hover */
     }
 
+    a {
+        text-decoration: none;
+        color: inherit; /* Ensure links inside posts inherit text color */
+    }
 </style>
 
 {% if user.is_authenticated %}
-    <a href="{% url 'news:add-new-post' %}" class="add-button">+ Новый пост</a>
+    <a href="{% url 'news:add-new-post' %}" class="add-button">
+        + Новый пост
+    </a>
 {% endif %}
 
 <div class="feed-container">
     {% for post in posts %}
-        <a href="{% url 'news:details' pid=post.pk %}">
+        {# The entire post div is now a clickable link #}
+        <a href="{% url 'news:details' pid=post.pk %}" class="post-link-wrapper">
             <div class="post">
                 {% if post.attachments.all %}
-                    <div style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory;">
+                    <div class="image-gallery">
                         {% for image in post.attachments.all %}
-                            <img src="{{ image.image.url }}" alt="Post image" style="width: 100%; height: auto; scroll-snap-align: start;">
+                            <img src="{{ image.image.url }}" alt="Post image for {{ post.title }}">
                         {% endfor %}
                     </div>
                 {% endif %}
-                
                 <div class="post-content">
                     <div class="post-title">{{ post.title }}</div>
                     <div class="post-text">{{ post.content }}</div>
@@ -93,6 +185,15 @@
                 </div>
             </div>
         </a>
+    {% empty %}
+        <p style="text-align: center; color: var(--color-text-light-grey); margin-top: 50px; font-size: 1.2em;">
+            Пока нет постов. <br>
+            {% if user.is_authenticated %}
+                <a href="{% url 'news:add-new-post' %}" class="author-link" style="font-size: 1em;">Создайте первый!</a>
+            {% else %}
+                <a href="{% url 'user:login' %}" class="author-link" style="font-size: 1em;">Войдите</a>, чтобы начать публиковать.
+            {% endif %}
+        </p>
     {% endfor %}
 </div>
 {% endblock %}

@@ -2,19 +2,117 @@
 {% load static %}
 
 {% block content %}
-<div class="container" style="max-width: 700px; margin: 40px auto;">
-    <h2 style="text-align: center; color: #0077cc;">Выберите пользователя для чата</h2>
+<style>
+    /* Глобальные переменные стилей - предполагается, что они определены в base.html или глобальном CSS. */
+    :root {
+        --color-background: #0d0d0d;
+        --color-card-bg: rgba(20, 20, 30, 0.85);
+        --color-accent-purple: #8A2BE2; /* BlueViolet */
+        --color-accent-light-purple: #AA70FF; /* Lighter purple */
+        --color-text-white: #f0f0f0;
+        --color-text-light-grey: #ccc;
+        --color-divider-bg: rgba(138, 43, 226, 0.2);
+
+        --shadow-deep: 0 5px 15px rgba(0, 0, 0, 0.6);
+        --neon-glow-purple: 0 0 10px rgba(138, 43, 226, 0.7);
+        --text-glow-white: 0 0 8px rgba(255, 255, 255, 0.2);
+
+        --font-primary: 'Roboto', sans-serif;
+        --font-heading: 'Montserrat', sans-serif;
+    }
+
+    body {
+        background-color: var(--color-background);
+        font-family: var(--font-primary);
+        color: var(--color-text-white);
+    }
+
+    .chat-list-container {
+        max-width: 700px;
+        margin: 60px auto; /* Увеличенный отступ сверху */
+        padding: 40px; /* Увеличенный padding */
+        background-color: var(--color-card-bg);
+        border-radius: 16px;
+        box-shadow: var(--shadow-deep), var(--neon-glow-purple);
+        backdrop-filter: blur(8px);
+        border: 1px solid var(--color-accent-purple);
+        color: var(--color-text-white);
+        font-family: var(--font-primary);
+        text-align: center; /* Центрируем заголовок */
+    }
+
+    .chat-list-container h2 {
+        color: var(--color-accent-purple);
+        text-shadow: var(--neon-glow-purple);
+        font-family: var(--font-heading);
+        font-size: 30px;
+        margin-bottom: 35px; /* Увеличенный отступ */
+        letter-spacing: 1px;
+    }
+
+    .user-list {
+        list-style: none;
+        padding: 0;
+        margin-top: 0; /* Отступ от заголовка уже задан */
+    }
+
+    .user-list li {
+        margin-bottom: 20px; /* Отступ между элементами списка */
+    }
+
+    .user-list a {
+        display: flex; /* Используем flexbox для центрирования иконки/текста */
+        align-items: center; /* Выравнивание по центру по вертикали */
+        justify-content: center; /* Центрирование содержимого */
+        background-color: rgba(40, 40, 60, 0.8); /* Тёмный фон для элемента списка */
+        padding: 18px 25px; /* Увеличенный padding */
+        border-radius: 12px;
+        text-decoration: none;
+        color: var(--color-text-white); /* Белый текст */
+        font-weight: bold;
+        font-size: 1.1rem; /* Увеличенный размер шрифта */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3); /* Более выразительная тень */
+        transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+        border: 1px solid var(--color-divider-bg); /* Мягкая граница */
+    }
+
+    .user-list a:hover {
+        background-color: rgba(50, 50, 80, 0.9); /* Чуть светлее при наведении */
+        box-shadow: 0 6px 20px rgba(0,0,0,0.5), 0 0 15px rgba(138, 43, 226, 0.6); /* Неоновое свечение */
+        transform: translateY(-3px); /* Небольшой подъём */
+    }
+
+    .user-list a .chat-icon {
+        font-size: 1.5rem; /* Размер иконки */
+        color: var(--color-accent-light-purple); /* Цвет иконки */
+        margin-right: 12px; /* Отступ от текста */
+        text-shadow: 0 0 8px rgba(170, 112, 255, 0.5); /* Свечение иконки */
+    }
+
+    .no-users-message {
+        text-align: center;
+        color: var(--color-text-light-grey);
+        font-size: 1.1rem;
+        padding: 20px;
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 12px;
+        border: 1px solid var(--color-divider-bg);
+        box-shadow: inset 0 0 8px rgba(138, 43, 226, 0.2);
+    }
+</style>
+
+<div class="chat-list-container">
+    <h2>Выберите пользователя для чата</h2>
     
-    <ul style="list-style: none; padding: 0; margin-top: 30px;">
+    <ul class="user-list">
         {% for user in users %}
-            <li style="margin-bottom: 15px;">
-                <a href="{% url 'chat:chat_view' other_user_id=user.id %}" 
-                   style="display: block; background-color: #f1f9ff; padding: 15px 20px; border-radius: 10px; text-decoration: none; color: #0077cc; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: background-color 0.3s;">
-                    💬 {{ user.first_name }} {{ user.last_name }}
+            <li>
+                <a href="{% url 'chat:chat_view' other_user_id=user.id %}">
+                    <span class="chat-icon">💬</span> {{ user.first_name }} {{ user.last_name }}
                 </a>
             </li>
         {% empty %}
-            <li style="text-align: center; color: #6c757d;">Нет доступных пользователей.</li>
+            <li class="no-users-message">Нет доступных пользователей.</li>
         {% endfor %}
     </ul>
 </div>

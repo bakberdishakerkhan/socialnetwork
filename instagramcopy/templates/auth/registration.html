@@ -2,45 +2,177 @@
 {% load widget_tweaks %}
 
 {% block content %}
-<div class="container" style="max-width: 500px; margin: 60px auto; background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);">
-    <h2 class="text-center" style="color: #0077cc;">Регистрация</h2>
+<style>
+    /* Глобальные переменные стилей - предполагается, что они определены в base.html или глобальном CSS.
+       Здесь они включены для полноты, если их там нет. */
+    :root {
+        --color-background: #0d0d0d;
+        --color-card-bg: rgba(20, 20, 30, 0.85);
+        --color-accent-purple: #8A2BE2; /* BlueViolet */
+        --color-accent-light-purple: #AA70FF; /* Lighter purple */
+        --color-text-white: #f0f0f0;
+        --color-text-light-grey: #ccc;
+        --color-divider-bg: rgba(138, 43, 226, 0.2);
 
-    <form method="post" class="mt-4">
+        --shadow-deep: 0 5px 15px rgba(0, 0, 0, 0.6);
+        --neon-glow-purple: 0 0 10px rgba(138, 43, 226, 0.7);
+        --text-glow-white: 0 0 8px rgba(255, 255, 255, 0.2);
+
+        --font-primary: 'Roboto', sans-serif;
+        --font-heading: 'Montserrat', sans-serif;
+    }
+
+    body {
+        background-color: var(--color-background);
+        font-family: var(--font-primary);
+        color: var(--color-text-white);
+    }
+
+    .register-container {
+        max-width: 500px; /* Увеличенная ширина для полей */
+        margin: 60px auto;
+        padding: 40px; /* Увеличенный отступ */
+        background-color: var(--color-card-bg); /* Согласованный фон карточки */
+        border-radius: 16px; /* Согласованный border-radius */
+        box-shadow: var(--shadow-deep), var(--neon-glow-purple); /* Согласованная тень */
+        color: var(--color-text-white);
+        font-family: var(--font-primary);
+        border: 1px solid var(--color-accent-purple); /* Согласованная акцентная граница */
+        backdrop-filter: blur(8px); /* Согласованный эффект размытия */
+        text-align: center; /* Центрировать содержимое */
+    }
+
+    .register-container h2 {
+        color: var(--color-accent-purple); /* Согласованный цвет заголовка */
+        text-shadow: var(--neon-glow-purple); /* Согласованное свечение текста */
+        font-family: var(--font-heading);
+        font-size: 30px;
+        margin-bottom: 30px; /* Больше места под заголовком */
+        letter-spacing: 1px;
+    }
+
+    .register-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px; /* Пространство между группами полей формы */
+    }
+
+    .form-group { /* Общий класс для div с меткой и полем */
+        text-align: left; /* Выравнивание меток и полей влево внутри их группы */
+    }
+
+    .form-label {
+        font-weight: bold;
+        color: var(--color-text-light-grey); /* Согласованный цвет метки */
+        margin-bottom: 8px; /* Пространство под меткой */
+        display: block; /* Убедитесь, что метка занимает свою строку */
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+    }
+
+    .form-control {
+        width: calc(100% - 24px); /* Учитываем padding */
+        padding: 12px; /* Увеличенный padding */
+        background-color: #1a0f2e; /* Более тёмный фон для полей ввода */
+        border: 1px solid var(--color-accent-purple); /* Согласованная граница */
+        border-radius: 8px; /* Согласованный border-radius */
+        color: var(--color-text-white);
+        font-family: var(--font-primary);
+        font-size: 16px;
+        box-shadow: inset 0 0 5px rgba(138, 43, 226, 0.4); /* Согласованная внутренняя тень */
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--color-text-white);
+        box-shadow: inset 0 0 8px rgba(138, 43, 226, 0.7), 0 0 10px rgba(138, 43, 226, 0.5);
+        outline: none;
+    }
+
+    .register-submit-button { /* Новый класс для кнопки отправки */
+        padding: 14px; /* Увеличенный padding */
+        background: linear-gradient(45deg, var(--color-accent-purple), var(--color-accent-light-purple)); /* Согласованный градиент */
+        color: var(--color-text-white);
+        border: none;
+        border-radius: 8px; /* Согласованный border-radius */
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 0 12px rgba(138, 43, 226, 0.6); /* Согласованная тень */
+        width: 100%; /* Кнопка на всю ширину */
+        margin-top: 20px; /* Место над кнопкой */
+    }
+
+    .register-submit-button:hover {
+        background: linear-gradient(45deg, var(--color-accent-light-purple), var(--color-accent-purple));
+        box-shadow: 0 0 20px rgba(138, 43, 226, 0.9), 0 0 30px rgba(170, 112, 255, 0.7);
+        transform: translateY(-3px);
+    }
+
+    .additional-links {
+        margin-top: 25px;
+        font-size: 14px;
+    }
+
+    .additional-links a {
+        color: var(--color-accent-light-purple);
+        text-decoration: none;
+        font-weight: bold;
+        text-shadow: 0 0 5px rgba(170, 112, 255, 0.3);
+        transition: color 0.3s ease, text-shadow 0.3s ease;
+    }
+
+    .additional-links a:hover {
+        color: var(--color-text-white);
+        text-shadow: var(--text-glow-white);
+    }
+</style>
+
+<div class="register-container">
+    <h2>Регистрация</h2>
+
+    <form method="post" class="register-form">
         {% csrf_token %}
 
-        <div class="mb-3">
-            <label class="form-label">Имя</label>
+        <div class="form-group">
+            <label class="form-label" for="{{ form.first_name.id_for_label }}">Имя</label>
             {{ form.first_name|add_class:"form-control" }}
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Фамилия</label>
+        <div class="form-group">
+            <label class="form-label" for="{{ form.last_name.id_for_label }}">Фамилия</label>
             {{ form.last_name|add_class:"form-control" }}
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Почта</label>
+        <div class="form-group">
+            <label class="form-label" for="{{ form.email.id_for_label }}">Почта</label>
             {{ form.email|add_class:"form-control" }}
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Телефон</label>
+        <div class="form-group">
+            <label class="form-label" for="{{ form.phone.id_for_label }}">Телефон</label>
             {{ form.phone|add_class:"form-control" }}
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Пароль</label>
+        <div class="form-group">
+            <label class="form-label" for="{{ form.password1.id_for_label }}">Пароль</label>
             {{ form.password1|add_class:"form-control" }}
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Повторите пароль</label>
+        <div class="form-group">
+            <label class="form-label" for="{{ form.password2.id_for_label }}">Повторите пароль</label>
             {{ form.password2|add_class:"form-control" }}
         </div>
 
-        <button type="submit" class="btn btn-primary w-100" style="background-color: #0077cc; border: none;">
+        <button type="submit" class="register-submit-button">
             Зарегистрироваться
         </button>
     </form>
+
+    <div class="additional-links">
+        Уже есть аккаунт? <a href="{% url 'user:login' %}">Войти</a>
+    </div>
 </div>
 {% endblock %}

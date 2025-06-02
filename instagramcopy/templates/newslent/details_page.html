@@ -2,53 +2,322 @@
 {% load static %}
 
 {% block content %}
-<div class="container" style="max-width: 600px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); overflow: hidden; font-family: Arial, sans-serif;">
+<style>
+    /* Reusing styles from editpost.html and global variables for consistency */
+    .details-container {
+        max-width: 800px; /* Slightly wider than edit post for content display */
+        margin: 40px auto;
+        padding: 30px;
+        background-color: var(--color-card-bg); /* Use global card background */
+        border-radius: 16px; /* Matched border-radius from post_list.html */
+        box-shadow: var(--shadow-deep), var(--neon-glow-purple); /* Use global shadows */
+        color: var(--color-text-white); /* Use global text color */
+        font-family: 'Roboto', sans-serif; /* Use global font */
+        border: 1px solid var(--color-accent-purple); /* Add accent border */
+        backdrop-filter: blur(8px); /* Keep the blur effect */
+    }
 
-    <!-- Карусель изображений -->
-    <div style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory;">
+    /* Styles for the scrollable carousel */
+    .post-carousel {
+        display: flex; /* Use flexbox to keep images in a row */
+        overflow-x: auto; /* Enable horizontal scrolling */
+        scroll-snap-type: x mandatory; /* Snap to each image when scrolling */
+        -webkit-overflow-scrolling: touch; /* Smoother scrolling on iOS */
+        margin: -30px -30px 20px -30px; /* Adjust to sit at the top of the container, extending to edges */
+        border-radius: 12px 12px 0 0; /* Rounded top corners for the carousel */
+        overflow-y: hidden; /* Hide vertical scrollbar */
+        position: relative; /* For potential navigation buttons */
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5); /* Inner shadow for carousel */
+        padding-bottom: 5px; /* Space for a subtle scrollbar */
+        gap: 10px; /* Отступ между изображениями в карусели */
+
+        /* НОВЫЕ СТИЛИ ДЛЯ ЛУЧШЕГО ОТОБРАЖЕНИЯ ИЗОБРАЖЕНИЙ */
+        max-height: 500px; /* Максимальная высота для всей карусели. Настройте это значение по необходимости */
+        padding: 10px; /* Внутренние отступы, чтобы изображение не прилипало к краям */
+        box-sizing: border-box; /* Включаем padding в общую высоту/ширину */
+        align-items: center; /* Центрируем изображения по вертикали внутри карусели */
+    }
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .post-carousel::-webkit-scrollbar {
+        height: 8px; /* Thinner scrollbar */
+    }
+
+    .post-carousel::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1); /* Transparent track */
+        border-radius: 10px;
+    }
+
+    .post-carousel::-webkit-scrollbar-thumb {
+        background-color: rgba(138, 43, 226, 0.5); /* Semi-transparent purple thumb */
+        border-radius: 10px;
+        border: 1px solid rgba(138, 43, 226, 0.7); /* Accent border */
+    }
+
+    .post-carousel::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(170, 112, 255, 0.8); /* Lighter on hover */
+    }
+
+    .post-carousel img {
+        flex-shrink: 0; /* Prevent images from shrinking */
+        width: 100%; /* Изображение будет занимать 100% доступной ширины внутри карусели */
+        height: auto; /* Высота автоматически подстраивается под пропорции изображения */
+        object-fit: contain; /* Изображение полностью вписывается в контейнер, сохраняя пропорции */
+        scroll-snap-align: start; /* При прокрутке изображение прилипает к началу видимой области */
+        border-bottom: none; /* Убрано: нижняя граница, так как она может выглядеть странно с новым режимом отображения */
+        display: block; /* Убеждаемся, что изображение ведет себя как блочный элемент */
+    }
+
+    .content {
+        padding: 0 0 24px 0; /* Adjusted padding within the container */
+    }
+
+    .author-link {
+        font-weight: bold;
+        font-size: 16px;
+        color: var(--color-accent-purple); /* Use global accent color */
+        text-decoration: none;
+        text-shadow: var(--neon-glow-purple); /* Use global neon glow for text */
+        transition: color 0.3s ease, text-shadow 0.3s ease;
+    }
+
+    .author-link:hover {
+        color: var(--color-text-white);
+        text-shadow: var(--text-glow-white);
+    }
+
+    h3 {
+        margin-top: 15px; /* More spacing */
+        font-size: 28px; /* Slightly larger for title */
+        color: var(--color-text-white); /* Use global white text */
+        text-shadow: var(--text-glow-white); /* Use global text glow */
+        font-family: 'Montserrat', sans-serif;
+        letter-spacing: 1px;
+    }
+
+    p {
+        color: var(--color-text-light-grey); /* Use light grey for body text */
+        font-size: 16px;
+        line-height: 1.6;
+        margin-top: 15px;
+    }
+
+    .date {
+        font-size: 13px;
+        color: #B0B0B0; /* Keep a softer grey for date */
+        margin-top: 20px; /* More spacing */
+        font-style: italic;
+    }
+
+    /* Consistent Button Styling (like nav buttons and edit post button) */
+    .action-button {
+        background: linear-gradient(45deg, #7a2be2, #aa70ff);
+        color: var(--color-text-white);
+        border: none;
+        padding: 10px 20px; /* Adjusted padding for all action buttons */
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 0 10px rgba(138, 43, 226, 0.7), 0 0 25px rgba(170, 112, 255, 0.5);
+        transition: background 0.4s ease, box-shadow 0.4s ease, transform 0.25s ease;
+        display: inline-flex; /* Use inline-flex for button alignment */
+        align-items: center;
+        gap: 8px; /* Space between icon and text if any */
+        text-decoration: none; /* For link buttons */
+    }
+
+    .action-button:hover {
+        background: linear-gradient(45deg, #aa70ff, #7a2be2);
+        box-shadow: 0 0 18px rgba(170, 112, 255, 1), 0 0 40px rgba(138, 43, 226, 0.9);
+        transform: translateY(-4px);
+    }
+
+    .action-button:focus {
+        outline: 2px solid var(--color-accent-purple);
+        outline-offset: 4px;
+    }
+
+    /* Specific adjustments for like/comment sections */
+    .like-section {
+        padding: 20px 0; /* Add top padding */
+        border-top: 1px solid var(--color-divider-bg); /* Add divider */
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .like-section form {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .like-count {
+        color: var(--color-text-light-grey);
+        font-size: 1.1em;
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+    }
+
+    .comments-section {
+        padding: 20px 0 0 0; /* Adjusted padding */
+        border-top: 1px solid var(--color-divider-bg); /* Add divider */
+        margin-top: 20px;
+    }
+
+    .comments-section h4 {
+        color: var(--color-accent-purple);
+        text-shadow: var(--neon-glow-purple);
+        margin-bottom: 15px;
+        font-size: 1.4em;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .comment-box textarea {
+        width: calc(100% - 20px); /* Adjust for padding */
+        border: 1px solid var(--color-accent-purple); /* Use accent color for border */
+        background-color: #1a0f2e; /* Darker background */
+        color: var(--color-text-white);
+        border-radius: 8px; /* Matched border-radius */
+        padding: 10px; /* Matched padding */
+        min-height: 80px;
+        resize: vertical;
+        box-shadow: inset 0 0 5px rgba(138, 43, 226, 0.4);
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .comment-box textarea:focus {
+        border-color: var(--color-text-white);
+        box-shadow: inset 0 0 8px rgba(138, 43, 226, 0.7), 0 0 10px rgba(138, 43, 226, 0.5);
+        outline: none;
+    }
+
+    .comment-box button {
+        margin-top: 15px; /* More spacing */
+        /* Applying .action-button styles directly */
+        background: linear-gradient(45deg, #7a2be2, #aa70ff);
+        color: var(--color-text-white);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 0 10px rgba(138, 43, 226, 0.7), 0 0 25px rgba(170, 112, 255, 0.5);
+        transition: background 0.4s ease, box-shadow 0.4s ease, transform 0.25s ease;
+    }
+    .comment-box button:hover {
+        background: linear-gradient(45deg, #aa70ff, #7a2be2);
+        box-shadow: 0 0 18px rgba(170, 112, 255, 1), 0 0 40px rgba(138, 43, 226, 0.9);
+        transform: translateY(-4px);
+    }
+    .comment-box button:focus {
+        outline: 2px solid var(--color-accent-purple);
+        outline-offset: 4px;
+    }
+
+    .comments-section ul {
+        list-style: none;
+        padding: 0;
+        max-height: 250px; /* Slightly taller for more comments */
+        overflow-y: auto;
+        margin-top: 20px;
+        padding-right: 10px; /* Space for scrollbar */
+    }
+
+    .comments-section li {
+        margin-bottom: 15px; /* More spacing between comments */
+        border-bottom: 1px solid rgba(138, 43, 226, 0.2); /* Lighter divider */
+        padding-bottom: 10px;
+        color: var(--color-text-light-grey);
+    }
+
+    .comments-section li strong {
+        color: var(--color-accent-purple);
+        text-shadow: 0 0 5px rgba(170, 112, 255, 0.3);
+    }
+
+    .comments-section li small {
+        color: #B0B0B0; /* Slightly lighter for date */
+        font-size: 0.85em;
+        display: block; /* New line for date */
+        margin-top: 5px;
+    }
+
+    .manage-post {
+        display: flex;
+        justify-content: flex-end; /* Align to the right */
+        gap: 20px; /* Space between links */
+        padding: 16px 0 0 0; /* Adjusted padding */
+        border-top: 1px solid var(--color-divider-bg); /* Use global divider */
+        margin-top: 20px;
+    }
+
+    .manage-post a {
+        color: var(--color-accent-purple); /* Use global accent color */
+        text-decoration: none;
+        font-weight: bold;
+        text-shadow: var(--neon-glow-purple); /* Use global neon glow */
+        transition: color 0.3s ease, text-shadow 0.3s ease;
+        padding: 5px 10px; /* Add some padding for clickable area */
+        border-radius: 5px;
+    }
+
+    .manage-post a:hover {
+        color: var(--color-text-white);
+        text-shadow: var(--text-glow-white);
+        background-color: rgba(138, 43, 226, 0.1); /* Subtle background on hover */
+    }
+</style>
+
+<div class="details-container">
+    <div class="post-carousel">
         {% for image in images %}
-            <img src="{{ image.image.url }}" alt="Изображение поста" style="width: 100%; height: auto; scroll-snap-align: start;">
+            <img src="{{ image.image.url }}" alt="Изображение поста {{ forloop.counter }}">
+        {% empty %}
+            {# Optional: Display a placeholder if no images are available #}
+            <p style="color: var(--color-text-light-grey); text-align: center; width: 100%; padding: 20px;">
+                Нет изображений для этого поста.
+            </p>
         {% endfor %}
     </div>
 
-    <!-- Текстовый контент -->
-    <div style="padding: 24px;">
-        <a href="{% url 'user:profile' post.author.id %}" style="font-weight: bold; font-size: 16px; color: #0077cc; text-decoration: none;">
+    <div class="content">
+        <a href="{% url 'user:profile' post.author.id %}" class="author-link">
             {{ post.author.first_name }} {{ post.author.last_name }}
         </a>
-        <h3 style="margin-top: 10px; font-size: 22px; color: #212529;">{{ post.title }}</h3>
-        <p style="color: #333; font-size: 15px; line-height: 1.6;">{{ post.content }}</p>
-        <p style="font-size: 13px; color: #888; margin-top: 10px;">Опубликовано: {{ post.publication_date }}</p>
+        <h3>{{ post.title }}</h3>
+        <p>{{ post.content }}</p>
+        <p class="date">Опубликовано: {{ post.publication_date }}</p>
     </div>
 
-    <!-- Лайк и комментарии -->
-    <div style="padding: 0 24px 24px 24px;">
-        <!-- Лайк -->
+    <div class="like-section">
         {% if request.user.is_authenticated %}
             <form method="post" action="{% url 'news:like-post' post.id %}">
                 {% csrf_token %}
-                <button type="submit" style="background: none; border: none; color: #0077cc; font-weight: bold; cursor: pointer;">
+                <button type="submit" class="action-button">
                     {% if is_liked %}
                         👎 Убрать лайк
                     {% else %}
                         👍 Лайк
                     {% endif %}
                 </button>
-                <span style="margin-left: 10px; color: #555;">{{ post.likes.count }} лайков</span>
+                <span class="like-count">{{ post.likes.count }} лайков</span>
             </form>
         {% else %}
-            <p><a href="{% url 'user:login' %}">Войдите</a>, чтобы поставить лайк.</p>
+            <p><a href="{% url 'user:login' %}" class="author-link">Войдите</a>, чтобы поставить лайк.</p>
         {% endif %}
     </div>
 
-    <!-- Комментарии -->
-    <div style="padding: 0 24px 24px 24px;">
-        <h4 style="margin-bottom: 10px;">Комментарии ({{ post.comments.count }})</h4>
-        <ul style="list-style: none; padding: 0; max-height: 200px; overflow-y: auto;">
+    <div class="comments-section">
+        <h4>Комментарии ({{ post.comments.count }})</h4>
+        <ul>
             {% for comment in post.comments.all %}
-                <li style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 6px;">
+                <li>
                     <strong>{{ comment.user.first_name }}</strong>: {{ comment.text }}<br>
-                    <small style="color: #888;">{{ comment.created_at }}</small>
+                    <small>{{ comment.created_at }}</small>
                 </li>
             {% empty %}
                 <li>Пока нет комментариев.</li>
@@ -56,21 +325,20 @@
         </ul>
 
         {% if request.user.is_authenticated %}
-        <form method="post" action="{% url 'news:add-comment' post.id %}" style="margin-top: 12px;">
+        <form method="post" action="{% url 'news:add-comment' post.id %}" class="comment-box">
             {% csrf_token %}
-            <textarea name="comment" rows="3" style="width: 100%; border: 1px solid #ccc; border-radius: 6px; padding: 8px;" placeholder="Напишите комментарий..."></textarea>
-            <button type="submit" style="margin-top: 8px; background-color: #4CAF50; color: white; border: none; padding: 6px 12px; border-radius: 5px;">Добавить</button>
+            <textarea name="comment" rows="3" placeholder="Напишите комментарий..."></textarea>
+            <button type="submit" class="action-button">Добавить</button>
         </form>
         {% else %}
-            <p><a href="{% url 'user:login' %}">Войдите</a>, чтобы комментировать.</p>
+            <p><a href="{% url 'user:login' %}" class="author-link">Войдите</a>, чтобы комментировать.</p>
         {% endif %}
     </div>
 
-    <!-- Управление постом -->
     {% if request.user.is_authenticated and request.user == post.author or request.user.is_superuser %}
-    <div style="display: flex; justify-content: space-between; padding: 16px 24px; border-top: 1px solid #eee; background-color: #f9f9f9;">
-        <a href="{% url 'news:edit-post' pid=post.pk %}" style="color: #0077cc; text-decoration: none;">✏️ Редактировать</a>
-        <a href="{% url 'news:delete-post' pid=post.pk %}" style="color: #dc3545; text-decoration: none;">🗑️ Удалить</a>
+    <div class="manage-post">
+        <a href="{% url 'news:edit-post' pid=post.pk %}" class="action-link">✏️ Редактировать</a>
+        <a href="{% url 'news:delete-post' pid=post.pk %}" class="action-link">🗑️ Удалить</a>
     </div>
     {% endif %}
 </div>

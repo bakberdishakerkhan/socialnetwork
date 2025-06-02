@@ -1,76 +1,153 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
 {% block content %}
-<div class="chat-container" style="max-width: 800px; margin: 40px auto; padding: 25px; background: white; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.05);">
-    <h2 style="text-align: center; color: #0077cc; margin-bottom: 25px;">
-        Чат с {{ other_user.get_full_name|default:other_user.username }}
-    </h2>
-
-    <div id="chat-messages" class="chat-box">
-        <!-- Messages will appear here -->
-    </div>
-
-    <div class="chat-input">
-        <input type="text" id="message-input" placeholder="Введите сообщение..." />
-        <button id="send-btn" title="Отправить">
-            <img src="{% static 'img/paper-plane.png' %}" alt="Отправить" />
-        </button>
-    </div>
-</div>
-
 <style>
+    /* Глобальные переменные стилей - предполагается, что они определены в base.html или глобальном CSS. */
+    :root {
+        --color-background: #0d0d0d;
+        --color-card-bg: rgba(20, 20, 30, 0.85);
+        --color-accent-purple: #8A2BE2; /* BlueViolet */
+        --color-accent-light-purple: #AA70FF; /* Lighter purple */
+        --color-text-white: #f0f0f0;
+        --color-text-light-grey: #ccc;
+        --color-divider-bg: rgba(138, 43, 226, 0.2);
+
+        --shadow-deep: 0 5px 15px rgba(0, 0, 0, 0.6);
+        --neon-glow-purple: 0 0 10px rgba(138, 43, 226, 0.7);
+        --text-glow-white: 0 0 8px rgba(255, 255, 255, 0.2);
+
+        --font-primary: 'Roboto', sans-serif;
+        --font-heading: 'Montserrat', sans-serif;
+
+        /* Цвета для сообщений */
+        --color-my-message-bg: var(--color-accent-purple);
+        --color-my-message-text: var(--color-text-white);
+        --color-other-message-bg: rgba(40, 40, 60, 0.8); /* Темнее для сообщений собеседника */
+        --color-other-message-text: var(--color-text-light-grey);
+        --color-message-header: var(--color-accent-light-purple); /* Заголовок отправителя */
+        --color-message-time: #888;
+    }
+
+    body {
+        background-color: var(--color-background);
+        font-family: var(--font-primary);
+        color: var(--color-text-white);
+    }
+
+    .chat-container {
+        max-width: 800px;
+        margin: 60px auto; /* Больше отступ сверху */
+        padding: 30px; /* Увеличенный padding */
+        background-color: var(--color-card-bg);
+        border-radius: 16px;
+        box-shadow: var(--shadow-deep), var(--neon-glow-purple);
+        backdrop-filter: blur(8px);
+        border: 1px solid var(--color-accent-purple);
+        color: var(--color-text-white);
+        font-family: var(--font-primary);
+    }
+
+    .chat-container h2 {
+        text-align: center;
+        color: var(--color-accent-purple);
+        text-shadow: var(--neon-glow-purple);
+        font-family: var(--font-heading);
+        font-size: 30px;
+        margin-bottom: 30px;
+        letter-spacing: 1px;
+    }
+
     .chat-box {
         height: 500px;
         overflow-y: auto;
-        border: 1px solid #ddd;
+        border: 1px solid var(--color-divider-bg); /* Мягкая граница */
         padding: 20px;
-        background-color: #f9fcff;
+        background-color: rgba(0, 0, 0, 0.2); /* Темнее фон для поля сообщений */
         border-radius: 12px;
         margin-bottom: 20px;
+        box-shadow: inset 0 0 8px rgba(138, 43, 226, 0.3); /* Внутреннее свечение */
     }
+
+    /* Scrollbar styles (Webkit browsers like Chrome, Safari) */
+    .chat-box::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .chat-box::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+
+    .chat-box::-webkit-scrollbar-thumb {
+        background: var(--color-accent-purple);
+        border-radius: 10px;
+        box-shadow: 0 0 5px rgba(138, 43, 226, 0.5);
+    }
+
+    .chat-box::-webkit-scrollbar-thumb:hover {
+        background: var(--color-accent-light-purple);
+    }
+
 
     .chat-input {
         display: flex;
         align-items: center;
-        gap: 10px;
-        margin-top: 10px;
+        gap: 15px; /* Увеличил отступ */
+        margin-top: 20px; /* Отступ от поля сообщений */
     }
 
     .chat-input input {
         flex: 1;
-        padding: 10px 15px;
+        padding: 14px 20px; /* Увеличенный padding */
         border-radius: 30px;
-        border: 1px solid #ccc;
-        font-size: 1rem;
+        border: 1px solid var(--color-accent-purple);
+        background-color: #1a0f2e; /* Темный фон */
+        color: var(--color-text-white);
+        font-family: var(--font-primary);
+        font-size: 16px;
         outline: none;
+        box-shadow: inset 0 0 8px rgba(138, 43, 226, 0.4); /* Внутреннее свечение */
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .chat-input input::placeholder {
+        color: var(--color-text-light-grey);
+        opacity: 0.7;
+    }
+
+    .chat-input input:focus {
+        border-color: var(--color-text-white);
+        box-shadow: inset 0 0 10px rgba(138, 43, 226, 0.7), 0 0 15px rgba(170, 112, 255, 0.5);
     }
 
     .chat-input button {
-        background-color: #0077cc;
+        background-color: var(--color-accent-purple);
         border: none;
-        padding: 10px 14px;
+        padding: 15px; /* Увеличенный padding для круглой кнопки */
         border-radius: 50%;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: background 0.3s ease;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+        box-shadow: 0 0 12px rgba(138, 43, 226, 0.6);
     }
 
     .chat-input button:hover {
-        background-color: #005fa3;
+        background-color: var(--color-accent-light-purple);
+        box-shadow: 0 0 20px rgba(170, 112, 255, 0.8);
+        transform: scale(1.05);
     }
 
     .chat-input img {
-        width: 20px;
-        height: 20px;
-        filter: brightness(0) invert(1);
+        width: 24px; /* Увеличенный размер иконки */
+        height: 24px;
+        filter: brightness(0) invert(1); /* Для белой иконки на темном фоне */
     }
 
     .message-container {
-        margin-bottom: 16px;
+        margin-bottom: 18px; /* Увеличил отступ между сообщениями */
         display: flex;
         flex-direction: column;
     }
@@ -79,53 +156,85 @@
         font-weight: bold;
         font-size: 0.9rem;
         margin-bottom: 3px;
-        color: #555;
+        color: var(--color-message-header); /* Фиолетовый для заголовков */
+        text-shadow: 0 0 5px rgba(170, 112, 255, 0.3);
     }
 
     .message-bubble {
-        max-width: 70%;
-        padding: 12px 16px;
+        max-width: 75%; /* Чуть шире пузырьки */
+        padding: 12px 18px; /* Увеличенный padding */
         border-radius: 20px;
         word-break: break-word;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2); /* Более выразительная тень */
     }
 
     .my-message {
-        align-items: flex-end;
+        align-items: flex-end; /* Мои сообщения справа */
+    }
+
+    .my-message .message-header {
+        color: var(--color-text-white); /* Заголовок "Вы" белый */
+        text-shadow: var(--text-glow-white);
     }
 
     .my-message .message-bubble {
-        background-color: #0077cc;
-        color: white;
-        border-bottom-right-radius: 4px;
+        background-color: var(--color-my-message-bg); /* Фиолетовый фон */
+        color: var(--color-my-message-text); /* Белый текст */
+        border-bottom-right-radius: 6px; /* Чуть менее выраженный уголок */
+        box-shadow: 0 0 15px rgba(138, 43, 226, 0.7); /* Сильное неоновое свечение */
     }
 
     .other-message {
-        align-items: flex-start;
+        align-items: flex-start; /* Чужие сообщения слева */
     }
 
     .other-message .message-bubble {
-        background-color: #e6f0fa;
-        color: #333;
-        border-bottom-left-radius: 4px;
+        background-color: var(--color-other-message-bg); /* Темнее серый фон */
+        color: var(--color-other-message-text); /* Светло-серый текст */
+        border-bottom-left-radius: 6px;
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.4); /* Менее выраженная тень, без свечения */
     }
 
     .message-time {
-        font-size: 0.75rem;
-        color: #888;
-        margin-top: 4px;
+        font-size: 0.8rem; /* Чуть крупнее время */
+        color: var(--color-message-time);
+        margin-top: 6px; /* Отступ от пузырька */
+        align-self: flex-end; /* Выравнивание времени под своим сообщением */
     }
+
+    .other-message .message-time {
+        align-self: flex-start; /* Выравнивание времени под чужим сообщением */
+    }
+
 </style>
+
+<div class="chat-container">
+    <h2>
+        Чат с {{ other_user.get_full_name|default:other_user.username }}
+    </h2>
+
+    <div id="chat-messages" class="chat-box">
+        </div>
+
+    <div class="chat-input">
+        <input type="text" id="message-input" placeholder="Введите сообщение..." />
+        <button id="send-btn" title="Отправить сообщение">
+            <img src="{% static 'img/paper-plane.png' %}" alt="Отправить" />
+        </button>
+    </div>
+</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const userId = {{ user.id }};
+    const otherUserId = {{ other_user.id }}; // Добавил для ясности
     const chatMessagesDiv = document.getElementById("chat-messages");
     const messageInput = document.getElementById("message-input");
     const sendBtn = document.getElementById("send-btn");
 
     const wsScheme = window.location.protocol === "https:" ? "wss://" : "ws://";
-    const wsPath = wsScheme + window.location.host + "/ws/chat/" + userId + "/{{ other_user.id }}/";
+    // Убедитесь, что URL WebSocket совпадает с вашим routers.py
+    const wsPath = wsScheme + window.location.host + "/ws/chat/" + userId + "/" + otherUserId + "/";
     const chatSocket = new WebSocket(wsPath);
 
     chatSocket.onmessage = function(e) {
@@ -135,16 +244,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const messageContainer = document.createElement('div');
         messageContainer.className = `message-container ${isMyMessage ? 'my-message' : 'other-message'}`;
 
+        // Заголовок сообщения (отправитель)
         const headerDiv = document.createElement('div');
         headerDiv.className = 'message-header';
         headerDiv.textContent = isMyMessage ? 'Вы' : (data.sender_name || 'Собеседник');
         messageContainer.appendChild(headerDiv);
 
+        // Пузырёк сообщения
         const bubbleDiv = document.createElement('div');
         bubbleDiv.className = 'message-bubble';
         bubbleDiv.textContent = data.message;
         messageContainer.appendChild(bubbleDiv);
 
+        // Время сообщения
         if (data.timestamp) {
             const timeDiv = document.createElement('div');
             timeDiv.className = 'message-time';
@@ -153,11 +265,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         chatMessagesDiv.appendChild(messageContainer);
-        chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+        chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight; // Прокрутка к последнему сообщению
+    };
+
+    chatSocket.onopen = function(e) {
+        console.log('Chat WebSocket opened successfully.');
+        // Можно загрузить старые сообщения здесь, если нужно
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    chatSocket.onerror = function(e) {
+        console.error('Chat socket error:', e);
     };
 
     function formatTime(timestamp) {
         const date = new Date(timestamp);
+        // Форматирование времени в 24-часовом формате с минутами
         return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     }
 
@@ -165,14 +291,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const message = messageInput.value.trim();
         if (message && chatSocket.readyState === WebSocket.OPEN) {
             chatSocket.send(JSON.stringify({'message': message}));
-            messageInput.value = '';
+            messageInput.value = ''; // Очистить поле ввода
         }
     }
 
     sendBtn.addEventListener('click', sendMessage);
     messageInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') sendMessage();
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Предотвратить стандартное поведение Enter (например, перенос строки)
+            sendMessage();
+        }
     });
+
+    // Initial scroll to bottom in case there are pre-loaded messages
+    setTimeout(() => {
+        chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+    }, 100); // Небольшая задержка, чтобы DOM успел отрендериться
 });
 </script>
 {% endblock %}

@@ -4,23 +4,131 @@
 
 
 {% block content %}
-<div class="container" style="max-width: 400px; margin: 60px auto; background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);">
-    <h2 class="text-center" style="color: #0077cc;">Вход в аккаунт</h2>
-    
-    <form method="post" class="mt-4">
-        {% csrf_token %}
+<style>
+    /* Глобальные переменные стилей - предполагается, что они определены в base.html или глобальном CSS.
+       Здесь они включены для полноты, если их там нет. */
+    :root {
+        --color-background: #0d0d0d;
+        --color-card-bg: rgba(20, 20, 30, 0.85);
+        --color-accent-purple: #8A2BE2; /* BlueViolet */
+        --color-accent-light-purple: #AA70FF; /* Lighter purple */
+        --color-text-white: #f0f0f0;
+        --color-text-light-grey: #ccc;
+        --color-divider-bg: rgba(138, 43, 226, 0.2);
 
-        <div class="mb-3">
-            <label for="id_email" class="form-label" style="font-weight: 500;">Почта</label>
-            {{ form.email|add_class:"form-control" }}
-        </div>
+        --shadow-deep: 0 5px 15px rgba(0, 0, 0, 0.6);
+        --neon-glow-purple: 0 0 10px rgba(138, 43, 226, 0.7);
+        --text-glow-white: 0 0 8px rgba(255, 255, 255, 0.2);
 
-        <div class="mb-3">
-            <label for="id_password" class="form-label" style="font-weight: 500;">Пароль</label>
-            {{ form.password|add_class:"form-control" }}
-        </div>
+        --font-primary: 'Roboto', sans-serif;
+        --font-heading: 'Montserrat', sans-serif;
+    }
 
-        <button type="submit" class="btn btn-primary w-100" style="background-color: #0077cc; border: none;">Войти</button>
-    </form>
+    body {
+        background-color: var(--color-background);
+        font-family: var(--font-primary);
+        color: var(--color-text-white);
+    }
+
+    .login-container {
+        max-width: 450px; /* Немного шире для лучшего расположения формы */
+        margin: 60px auto;
+        padding: 40px; /* Увеличенный отступ */
+        background-color: var(--color-card-bg); /* Согласованный фон карточки */
+        border-radius: 16px; /* Согласованный border-radius */
+        box-shadow: var(--shadow-deep), var(--neon-glow-purple); /* Согласованная тень */
+        color: var(--color-text-white);
+        font-family: var(--font-primary);
+        border: 1px solid var(--color-accent-purple); /* Согласованная акцентная граница */
+        backdrop-filter: blur(8px); /* Согласованный эффект размытия */
+        text-align: center; /* Центрировать содержимое */
+    }
+
+    .login-container h2 {
+        color: var(--color-accent-purple); /* Согласованный цвет заголовка */
+        text-shadow: var(--neon-glow-purple); /* Согласованное свечение текста */
+        font-family: var(--font-heading);
+        font-size: 30px;
+        margin-bottom: 30px; /* Больше места под заголовком */
+        letter-spacing: 1px;
+    }
+
+    .login-form-group { /* Изменил mb-3 на свой класс */
+        text-align: left; /* Выравнивание меток и полей влево внутри их группы */
+        margin-bottom: 20px; /* Пространство между группами полей */
+    }
+
+    .form-label { /* Изменил form-label на свой класс */
+        font-weight: bold;
+        color: var(--color-text-light-grey); /* Согласованный цвет метки */
+        margin-bottom: 8px; /* Пространство под меткой */
+        display: block; /* Убедитесь, что метка занимает свою строку */
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+    }
+
+    .form-control { /* Изменил form-control на свой класс */
+        width: calc(100% - 24px); /* Учитываем padding */
+        padding: 12px; /* Увеличенный padding */
+        background-color: #1a0f2e; /* Более тёмный фон для полей ввода */
+        border: 1px solid var(--color-accent-purple); /* Согласованная граница */
+        border-radius: 8px; /* Согласованный border-radius */
+        color: var(--color-text-white);
+        font-family: var(--font-primary);
+        font-size: 16px;
+        box-shadow: inset 0 0 5px rgba(138, 43, 226, 0.4); /* Согласованная внутренняя тень */
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--color-text-white);
+        box-shadow: inset 0 0 8px rgba(138, 43, 226, 0.7), 0 0 10px rgba(138, 43, 226, 0.5);
+        outline: none;
+    }
+
+    .login-submit-button { /* Изменил btn btn-primary w-100 на свой класс */
+        padding: 14px; /* Увеличенный padding */
+        background: linear-gradient(45deg, var(--color-accent-purple), var(--color-accent-light-purple)); /* Согласованный градиент */
+        color: var(--color-text-white);
+        border: none;
+        border-radius: 8px; /* Согласованный border-radius */
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 0 12px rgba(138, 43, 226, 0.6); /* Согласованная тень */
+        width: 100%; /* Кнопка на всю ширину */
+        margin-top: 20px; /* Место над кнопкой */
+    }
+
+    .login-submit-button:hover {
+        background: linear-gradient(45deg, var(--color-accent-light-purple), var(--color-accent-purple));
+        box-shadow: 0 0 20px rgba(138, 43, 226, 0.9), 0 0 30px rgba(170, 112, 255, 0.7);
+        transform: translateY(-3px);
+    }
+
+    /* Удалён блок .additional-links, чтобы избежать ошибки ReverseMatch */
+
+</style>
+
+<div class="login-container"> {# Используем новый класс для контейнера #}
+    <h2 class="text-center">Вход в аккаунт</h2> {# Убрал inline-стили #}
+    
+    <form method="post" class="mt-4"> {# mt-4 можно убрать, т.к. gap в форме #}
+        {% csrf_token %}
+
+        <div class="login-form-group"> {# Используем новый класс для группы полей #}
+            <label for="id_email" class="form-label">Почта</label> {# Используем новый класс для метки #}
+            {{ form.email|add_class:"form-control" }} {# Используем новый класс для поля ввода #}
+        </div>
+
+        <div class="login-form-group"> {# Используем новый класс для группы полей #}
+            <label for="id_password" class="form-label">Пароль</label> {# Используем новый класс для метки #}
+            {{ form.password|add_class:"form-control" }} {# Используем новый класс для поля ввода #}
+        </div>
+
+        <button type="submit" class="login-submit-button">Войти</button> {# Используем новый класс для кнопки #}
+    </form>
 </div>
 {% endblock %}

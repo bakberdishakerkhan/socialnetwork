@@ -1,9 +1,72 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container" style="max-width: 500px; margin: 100px auto; background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06); text-align: center;">
-    <h3 style="color: #0077cc; margin-bottom: 20px;">Письмо отправлено</h3>
-    <p style="font-size: 16px; color: #333;">
+<style>
+    /* Глобальные переменные стилей - предполагается, что они определены в base.html или глобальном CSS.
+       Здесь они включены для полноты, если их там нет. */
+    :root {
+        --color-background: #0d0d0d;
+        --color-card-bg: rgba(20, 20, 30, 0.85);
+        --color-accent-purple: #8A2BE2; /* BlueViolet */
+        --color-accent-light-purple: #AA70FF; /* Lighter purple */
+        --color-text-white: #f0f0f0;
+        --color-text-light-grey: #ccc;
+        --color-divider-bg: rgba(138, 43, 226, 0.2);
+
+        --shadow-deep: 0 5px 15px rgba(0, 0, 0, 0.6);
+        --neon-glow-purple: 0 0 10px rgba(138, 43, 226, 0.7);
+        --text-glow-white: 0 0 8px rgba(255, 255, 255, 0.2);
+
+        --font-primary: 'Roboto', sans-serif;
+        --font-heading: 'Montserrat', sans-serif;
+    }
+
+    body {
+        background-color: var(--color-background);
+        font-family: var(--font-primary);
+        color: var(--color-text-white);
+    }
+
+    .message-container {
+        max-width: 500px;
+        margin: 100px auto;
+        padding: 40px; /* Увеличенный отступ */
+        background-color: var(--color-card-bg); /* Согласованный фон карточки */
+        border-radius: 16px; /* Согласованный border-radius */
+        box-shadow: var(--shadow-deep), var(--neon-glow-purple); /* Согласованная тень */
+        color: var(--color-text-white);
+        font-family: var(--font-primary);
+        border: 1px solid var(--color-accent-purple); /* Согласованная акцентная граница */
+        backdrop-filter: blur(8px); /* Согласованный эффект размытия */
+        text-align: center; /* Центрировать содержимое */
+    }
+
+    .message-container h3 {
+        color: var(--color-accent-purple); /* Согласованный цвет заголовка */
+        text-shadow: var(--neon-glow-purple); /* Согласованное свечение текста */
+        font-family: var(--font-heading);
+        font-size: 28px; /* Немного меньше, чем h2, но стильно */
+        margin-bottom: 25px; /* Пространство под заголовком */
+        letter-spacing: 1px;
+    }
+
+    .message-container p {
+        font-size: 16px;
+        color: var(--color-text-light-grey); /* Согласованный цвет основного текста */
+        line-height: 1.6;
+        margin-bottom: 0; /* Убрать лишний нижний отступ */
+    }
+
+    .message-container strong {
+        color: var(--color-text-white); /* Белый для выделения почты */
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.3); /* Небольшое свечение для выделенного текста */
+    }
+
+</style>
+
+<div class="message-container">
+    <h3>✉️ Письмо отправлено</h3>
+    <p>
         На вашу почту <strong>{{ email }}</strong> было отправлено сообщение для активации аккаунта.
         <br><br>
         Пожалуйста, проверьте почтовый ящик и следуйте инструкциям в письме.

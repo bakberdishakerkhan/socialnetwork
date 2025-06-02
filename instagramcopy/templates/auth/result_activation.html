@@ -1,19 +1,101 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container" style="max-width: 500px; margin: 100px auto; background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06); text-align: center;">
+<style>
+    /* Глобальные переменные стилей - предположительно, они определены в base.html или глобальном CSS.
+       Здесь они включены для полноты, если их там нет. */
+    :root {
+        --color-background: #0d0d0d;
+        --color-card-bg: rgba(20, 20, 30, 0.85);
+        --color-accent-purple: #8A2BE2; /* BlueViolet */
+        --color-accent-light-purple: #AA70FF; /* Lighter purple */
+        --color-text-white: #f0f0f0;
+        --color-text-light-grey: #ccc;
+        --color-divider-bg: rgba(138, 43, 226, 0.2);
 
+        --shadow-deep: 0 5px 15px rgba(0, 0, 0, 0.6);
+        --neon-glow-purple: 0 0 10px rgba(138, 43, 226, 0.7);
+        --text-glow-white: 0 0 8px rgba(255, 255, 255, 0.2);
+
+        --font-primary: 'Roboto', sans-serif;
+        --font-heading: 'Montserrat', sans-serif;
+
+        /* Цвета для статусов активации */
+        --color-success: #28a745; /* Зеленый */
+        --color-error: #dc3545; /* Красный */
+    }
+
+    body {
+        background-color: var(--color-background);
+        font-family: var(--font-primary);
+        color: var(--color-text-white);
+    }
+
+    .activation-message-container {
+        max-width: 500px;
+        margin: 100px auto;
+        padding: 40px; /* Увеличенный отступ */
+        background-color: var(--color-card-bg); /* Согласованный фон карточки */
+        border-radius: 16px; /* Согласованный border-radius */
+        box-shadow: var(--shadow-deep), var(--neon-glow-purple); /* Согласованная тень */
+        color: var(--color-text-white);
+        font-family: var(--font-primary);
+        border: 1px solid var(--color-accent-purple); /* Согласованная акцентная граница */
+        backdrop-filter: blur(8px); /* Согласованный эффект размытия */
+        text-align: center; /* Центрировать содержимое */
+    }
+
+    .activation-message-container h3 {
+        font-family: var(--font-heading);
+        font-size: 28px;
+        margin-bottom: 25px;
+        letter-spacing: 1px;
+    }
+
+    /* Стили для заголовков в зависимости от статуса */
+    .activation-message-container h3.success {
+        color: var(--color-success); /* Яркий зеленый для успеха */
+        text-shadow: 0 0 10px var(--color-success), 0 0 20px rgba(40, 167, 69, 0.5); /* Свечение зеленого */
+    }
+
+    .activation-message-container h3.error {
+        color: var(--color-error); /* Яркий красный для ошибки */
+        text-shadow: 0 0 10px var(--color-error), 0 0 20px rgba(220, 53, 69, 0.5); /* Свечение красного */
+    }
+
+    .activation-message-container p {
+        font-size: 16px;
+        color: var(--color-text-light-grey); /* Согласованный цвет основного текста */
+        line-height: 1.6;
+        margin-bottom: 0; /* Убрать лишний нижний отступ */
+    }
+
+    .activation-message-container p a {
+        color: var(--color-accent-light-purple); /* Акцентный цвет для ссылок */
+        text-decoration: none;
+        font-weight: bold;
+        text-shadow: 0 0 5px rgba(170, 112, 255, 0.3);
+        transition: color 0.3s ease, text-shadow 0.3s ease;
+    }
+
+    .activation-message-container p a:hover {
+        color: var(--color-text-white); /* Белый при наведении */
+        text-shadow: var(--text-glow-white); /* Белое свечение при наведении */
+    }
+
+</style>
+
+<div class="activation-message-container">
     {% if is_active %}
-        <h3 style="color: #28a745; margin-bottom: 20px;">Аккаунт активирован!</h3>
-        <p style="font-size: 16px; color: #333;">
-            Поздравляем! Теперь вы можете <a href="{% url 'user:login' %}" style="color: #0077cc;">войти в аккаунт</a>.
+        <h3 class="success">✅ Аккаунт активирован!</h3>
+        <p>
+            Поздравляем! Теперь вы можете <a href="{% url 'user:login' %}">войти в аккаунт</a>.
         </p>
     {% else %}
-        <h3 style="color: #dc3545; margin-bottom: 20px;">Срок активации истёк</h3>
-        <p style="font-size: 16px; color: #333;">
-            Ссылка устарела или срок активации истёк. Пожалуйста, <a href="{% url 'user:registr' %}" style="color: #0077cc;">зарегистрируйтесь заново</a>.
+        <h3 class="error">❌ Срок активации истёк</h3>
+        <p>
+            Ссылка устарела или срок активации истёк. Пожалуйста, <a href="{% url 'user:register' %}">зарегистрируйтесь заново</a>.
         </p>
     {% endif %}
-
 </div>
 {% endblock %}

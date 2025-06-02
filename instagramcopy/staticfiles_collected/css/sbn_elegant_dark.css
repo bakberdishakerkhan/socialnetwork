@@ -1,0 +1,144 @@
+/* --- Стили для ленты новостей (feed.html) --- */
+
+.feed-container {
+    max-width: 800px; /* Увеличиваем ширину ленты для лучшего восприятия контента */
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.post-link {
+    text-decoration: none; /* Убираем подчеркивание у ссылки на пост */
+    display: block; /* Ссылка занимает всю ширину карточки поста */
+    margin-bottom: 30px; /* Расстояние между постами */
+}
+
+/* Переопределяем стили для .post из base.html, используя .content-card */
+.post-card {
+    /* Эти стили уже определены в .content-card в sbn_elegant_dark.css
+       background-color: var(--color-panel-bg);
+       border-radius: 10px;
+       padding: 0; !important; /* Убираем внутренний padding, чтобы картинка была вплотную к краям */
+       /* margin-bottom: 30px; /* Это уже установлено через .post-link */
+       /* box-shadow: var(--shadow-soft);
+       border: 1px solid var(--color-border);
+       overflow: hidden; /* Важно для закругленных углов изображений */
+    */
+    padding: 0; /* Убираем внутренний padding, чтобы изображение было вплотную к краям */
+}
+
+.post-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), var(--glow-subtle);
+}
+
+.post-images {
+    display: flex;
+    overflow-x: auto; /* Позволяет прокручивать изображения горизонтально */
+    scroll-snap-type: x mandatory; /* Плавная прокрутка к следующему изображению */
+    border-radius: 10px 10px 0 0; /* Закругляем только верхние углы */
+    background-color: rgba(0, 0, 0, 0.3); /* Немного темнее фон для загрузки изображений */
+}
+
+.post-images img {
+    width: 100%;
+    height: auto;
+    min-width: 100%; /* Каждое изображение занимает всю ширину контейнера */
+    display: block;
+    scroll-snap-align: start;
+    object-fit: cover; /* Изображения будут обрезаться, чтобы заполнить контейнер */
+    max-height: 400px; /* Ограничиваем высоту изображения для единообразия */
+}
+
+.post-content {
+    padding: 25px; /* Внутренний отступ для текста поста */
+}
+
+.post-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 24px; /* Увеличиваем размер заголовка поста */
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--color-text-light); /* Светлый цвет для заголовка */
+}
+
+.post-text {
+    font-size: 16px;
+    color: var(--color-text-secondary); /* Второстепенный текст */
+    line-height: 1.7;
+    margin-bottom: 15px;
+}
+
+.post-date {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    opacity: 0.8;
+    margin-top: 10px;
+    text-align: right; /* Дата справа */
+}
+
+.add-button {
+    display: block;
+    width: fit-content;
+    margin: 30px auto 40px auto; /* Отступы сверху и снизу */
+    padding: 12px 28px;
+    background: linear-gradient(45deg, var(--color-primary-accent), #20C2A0); /* Градиент как у кнопок в шапке */
+    color: var(--color-bg-deep);
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1em;
+    text-transform: uppercase;
+    box-shadow: var(--shadow-soft);
+    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease, color 0.3s ease;
+}
+
+.add-button:hover {
+    background: linear-gradient(45deg, var(--color-secondary-accent), #FFB700);
+    color: var(--color-bg-deep);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), var(--glow-gold);
+    transform: translateY(-4px);
+}
+
+.no-posts-message {
+    text-align: center;
+    color: var(--color-text-secondary);
+    font-size: 1.2em;
+    padding: 50px;
+    border: 1px dashed var(--color-border);
+    border-radius: 8px;
+    margin-top: 50px;
+}
+
+/* --- Медиа-запросы для адаптивности в ленте --- */
+@media (max-width: 768px) {
+    .feed-container {
+        padding: 15px;
+        margin: 20px auto;
+    }
+    .post-content {
+        padding: 20px;
+    }
+    .post-title {
+        font-size: 22px;
+    }
+    .post-text {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .feed-container {
+        padding: 10px;
+        margin: 15px auto;
+    }
+    .post-title {
+        font-size: 20px;
+    }
+    .post-text {
+        font-size: 14px;
+    }
+    .add-button {
+        width: calc(100% - 40px);
+        margin: 20px auto;
+    }
+}

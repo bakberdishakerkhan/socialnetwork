@@ -1,10 +1,190 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 
 {% block content %}
-  <h2>Редактировать профиль</h2>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Сохранить изменения</button>
-  </form>
+<style>
+    :root {
+        --color-background: #0d0d0d;
+        --color-card-bg: rgba(20, 20, 30, 0.85);
+        --color-accent-purple: #8A2BE2;
+        --color-accent-light-purple: #AA70FF;
+        --color-text-white: #f0f0f0;
+        --color-text-light-grey: #ccc;
+        --color-divider-bg: rgba(138, 43, 226, 0.2);
+
+        --shadow-deep: 0 5px 15px rgba(0, 0, 0, 0.6);
+        --neon-glow-purple: 0 0 10px rgba(138, 43, 226, 0.7);
+        --text-glow-white: 0 0 8px rgba(255, 255, 255, 0.2);
+
+        --font-primary: 'Roboto', sans-serif;
+        --font-heading: 'Montserrat', sans-serif;
+    }
+
+    body {
+        background-color: var(--color-background);
+        font-family: var(--font-primary);
+        color: var(--color-text-white);
+    }
+
+    .edit-profile-container {
+        max-width: 600px;
+        margin: 60px auto;
+        padding: 40px;
+        background-color: var(--color-card-bg);
+        border-radius: 16px;
+        box-shadow: var(--shadow-deep), var(--neon-glow-purple);
+        backdrop-filter: blur(8px);
+        color: var(--color-text-white);
+        font-family: var(--font-primary);
+        border: 1px solid var(--color-accent-purple);
+        text-align: center;
+    }
+
+    .edit-profile-container h2 {
+        color: var(--color-accent-purple);
+        text-shadow: var(--neon-glow-purple);
+        font-family: var(--font-heading);
+        font-size: 30px;
+        margin-bottom: 30px;
+        letter-spacing: 1px;
+    }
+
+    .edit-profile-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        text-align: left;
+    }
+
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    .form-label {
+        font-weight: bold;
+        color: var(--color-text-light-grey);
+        margin-bottom: 8px;
+        display: block;
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+    }
+
+    .form-control {
+        width: calc(100% - 24px);
+        padding: 12px;
+        background-color: #1a0f2e;
+        border: 1px solid var(--color-accent-purple);
+        border-radius: 8px;
+        color: var(--color-text-white);
+        font-family: var(--font-primary);
+        font-size: 16px;
+        box-shadow: inset 0 0 5px rgba(138, 43, 226, 0.4);
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--color-text-white);
+        box-shadow: inset 0 0 8px rgba(138, 43, 226, 0.7), 0 0 10px rgba(138, 43, 226, 0.5);
+        outline: none;
+    }
+
+    input[type="file"] {
+        padding: 8px;
+        background-color: #2a1f3e;
+        border: 1px dashed var(--color-accent-light-purple);
+        border-radius: 8px;
+        color: var(--color-text-white);
+        font-size: 14px;
+        cursor: pointer;
+        box-shadow: none;
+        transition: border-color 0.3s ease;
+    }
+
+    input[type="file"]::-webkit-file-upload-button {
+        background-color: var(--color-accent-purple);
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-right: 15px;
+        transition: background-color 0.3s ease;
+    }
+
+    input[type="file"]::-webkit-file-upload-button:hover {
+        background-color: var(--color-accent-light-purple);
+    }
+
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        color: #ff6b6b;
+        font-size: 0.9rem;
+        text-align: left;
+        text-shadow: 0 0 5px rgba(255, 107, 107, 0.3);
+    }
+
+    .edit-profile-submit-button {
+        padding: 14px;
+        background: linear-gradient(45deg, var(--color-accent-purple), var(--color-accent-light-purple));
+        color: var(--color-text-white);
+        border: none;
+        border-radius: 8px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 0 12px rgba(138, 43, 226, 0.6);
+        width: 100%;
+        margin-top: 30px;
+    }
+
+    .edit-profile-submit-button:hover {
+        background: linear-gradient(45deg, var(--color-accent-light-purple), var(--color-accent-purple));
+        box-shadow: 0 0 20px rgba(138, 43, 226, 0.9), 0 0 30px rgba(170, 112, 255, 0.7);
+        transform: translateY(-3px);
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+</style>
+
+<div class="edit-profile-container">
+    <h2>Редактировать профиль</h2>
+
+    <form method="post" enctype="multipart/form-data" class="edit-profile-form">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <ul class="errorlist">
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% for field in form %}
+            <div class="form-group">
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field|add_class:"form-control" }}
+                {% if field.errors %}
+                    <ul class="errorlist">
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="edit-profile-submit-button">
+            Сохранить изменения
+        </button>
+    </form>
+</div>
 {% endblock %}

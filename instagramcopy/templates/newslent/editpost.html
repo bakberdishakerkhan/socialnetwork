@@ -1,40 +1,196 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div style="max-width: 600px; margin: 30px auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: Arial, sans-serif; background-color: #fff;">
-    <h1 style="text-align: center; margin-bottom: 20px;">Редактировать пост</h1>
+<style>
+    /* Specific styles for the edit post form */
+    .edit-post-container {
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 30px;
+        background-color: var(--color-card-bg); /* Using defined variable */
+        border-radius: 15px;
+        box-shadow: var(--shadow-deep), var(--neon-glow-purple); /* Using defined variables */
+        color: var(--color-text-white); /* Using defined variable */
+        font-family: 'Roboto', sans-serif; /* Using defined font */
+        border: 1px solid var(--color-accent-purple);
+    }
 
-    <form method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
+    .edit-post-container h1 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: var(--color-accent-purple); /* Using defined variable */
+        text-shadow: var(--neon-glow-purple); /* Using defined variable */
+        font-family: 'Montserrat', sans-serif; /* Using defined font */
+        font-size: 32px;
+        letter-spacing: 1px;
+    }
+
+    .edit-post-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .edit-post-form label {
+        font-weight: bold;
+        color: var(--color-text-light-grey); /* Using defined variable */
+        margin-bottom: 5px;
+        display: block;
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+    }
+
+    .edit-post-form input[type="text"],
+    .edit-post-form textarea {
+        width: calc(100% - 20px); /* Adjust for padding */
+        padding: 10px;
+        background-color: #1a0f2e; /* Darker background */
+        border: 1px solid var(--color-accent-purple);
+        border-radius: 8px;
+        color: var(--color-text-white);
+        font-family: 'Roboto', sans-serif;
+        font-size: 16px;
+        box-shadow: inset 0 0 5px rgba(138, 43, 226, 0.4);
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .edit-post-form input[type="text"]:focus,
+    .edit-post-form textarea:focus {
+        border-color: var(--color-text-white);
+        box-shadow: inset 0 0 8px rgba(138, 43, 226, 0.7), 0 0 10px rgba(138, 43, 226, 0.5);
+        outline: none;
+    }
+
+    .edit-post-form textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .edit-post-form input[type="file"] {
+        color: var(--color-text-white);
+        background-color: #2C184B;
+        border: 1px solid var(--color-accent-purple);
+        border-radius: 8px;
+        padding: 8px;
+        cursor: pointer;
+    }
+
+    .edit-post-form input[type="file"]::file-selector-button {
+        background: linear-gradient(45deg, #7a2be2, #aa70ff);
+        color: var(--color-text-white);
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .edit-post-form input[type="file"]::file-selector-button:hover {
+        background: linear-gradient(45deg, #aa70ff, #7a2be2);
+        box-shadow: 0 0 10px rgba(170, 112, 255, 0.7);
+    }
+
+    .current-images-section p {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: var(--color-text-light-grey);
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+    }
+
+    .image-checkbox-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .image-checkbox-item {
+        position: relative;
+        border: 1px solid var(--color-accent-purple);
+        border-radius: 8px;
+        overflow: hidden;
+        transition: box-shadow 0.3s ease, transform 0.2s ease;
+    }
+
+    .image-checkbox-item:hover {
+        box-shadow: 0 0 15px rgba(138, 43, 226, 0.8);
+        transform: translateY(-2px);
+    }
+
+    .image-checkbox-item input[type="checkbox"] {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        transform: scale(1.3);
+        z-index: 2;
+        accent-color: var(--color-accent-purple); /* Style checkbox */
+        cursor: pointer;
+    }
+
+    .image-checkbox-item img {
+        width: 120px;
+        height: 100px;
+        object-fit: cover;
+        filter: brightness(0.85);
+        display: block; /* Remove extra space below image */
+    }
+
+    .edit-post-submit-button {
+        padding: 12px;
+        background: linear-gradient(135deg, var(--color-accent-purple), #AA70FF); /* Using defined variables */
+        color: var(--color-text-white);
+        border: none;
+        border-radius: 8px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 0 12px rgba(138, 43, 226, 0.6);
+    }
+
+    .edit-post-submit-button:hover {
+        background: linear-gradient(135deg, #AA70FF, var(--color-accent-purple));
+        box-shadow: 0 0 20px rgba(138, 43, 226, 0.9), 0 0 30px rgba(170, 112, 255, 0.7);
+        transform: translateY(-3px);
+    }
+</style>
+
+<div class="edit-post-container">
+    <h1>🚀 Редактировать пост</h1>
+
+    <form method="POST" enctype="multipart/form-data" class="edit-post-form">
         {% csrf_token %}
 
         <div>
-            <label for="title" style="font-weight: bold; color: #333;">Заголовок</label>
+            <label for="{{ form.title.id_for_label }}">Заголовок</label><br>
             {{ form.title }}
         </div>
 
         <div>
-            <label for="content" style="font-weight: bold; color: #333;">Контент</label>
+            <label for="{{ form.content.id_for_label }}">Контент</label><br>
             {{ form.content }}
         </div>
 
         <div>
-            <label for="images" style="font-weight: bold; color: #333;">Добавить картинки</label>
+            <label for="{{ form.images.id_for_label }}">Добавить картинки</label><br>
             {{ form.images }}
         </div>
 
-        <div>
-            <p style="font-weight: bold; margin-bottom: 10px; color: #333;">Удалить текущие изображения:</p>
-            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+        <div class="current-images-section">
+            <p>Удалить текущие изображения:</p>
+            <div class="image-checkbox-wrapper">
                 {% for img in post_att %}
-                    <div style="position: relative; display: inline-block;">
-                        <input type="checkbox" value="{{ img.pk }}" name="attachments" style="position: absolute; top: 5px; left: 5px; transform: scale(1.5);">
-                        <img src="{{ img.image.url }}" alt="Image" style="width: 120px; height: auto; border-radius: 5px; object-fit: cover;">
+                    <div class="image-checkbox-item">
+                        <input type="checkbox" value="{{ img.pk }}" name="attachments" id="checkbox-{{ img.pk }}">
+                        <label for="checkbox-{{ img.pk }}" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; cursor: pointer;"></label>
+                        <img src="{{ img.image.url }}" alt="Post Image">
                     </div>
                 {% endfor %}
             </div>
         </div>
 
-        <button type="submit" style="padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; font-size: 16px;">
+        <button type="submit" class="edit-post-submit-button">
             💾 Сохранить пост
         </button>
     </form>

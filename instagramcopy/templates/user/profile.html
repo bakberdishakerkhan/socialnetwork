@@ -1,96 +1,460 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
+<style>
+    /* Глобальные переменные стилей - предполагается, что они определены в base.html или глобальном CSS. */
+    :root {
+        --color-background: #0d0d0d;
+        --color-card-bg: rgba(20, 20, 30, 0.85);
+        --color-accent-purple: #8A2BE2; /* BlueViolet */
+        --color-accent-light-purple: #AA70FF; /* Lighter purple */
+        --color-text-white: #f0f0f0;
+        --color-text-light-grey: #ccc;
+        --color-divider-bg: rgba(138, 43, 226, 0.2);
 
-<div style="max-width: 600px; margin: auto; padding: 2rem; border: 1px solid #ddd; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-    <div style="text-align: center;">
-        <!-- Аватарка -->
+        --shadow-deep: 0 5px 15px rgba(0, 0, 0, 0.6);
+        --neon-glow-purple: 0 0 10px rgba(138, 43, 226, 0.7);
+        --text-glow-white: 0 0 8px rgba(255, 255, 255, 0.2);
+
+        --font-primary: 'Roboto', sans-serif;
+        --font-heading: 'Montserrat', sans-serif;
+
+        /* Дополнительные цвета для кнопок follow/unfollow */
+        --color-follow-start: #4CAF50; /* Зеленый старт */
+        --color-follow-end: #66BB6A;   /* Зеленый конец */
+        --color-unfollow-start: #f44336; /* Красный старт */
+        --color-unfollow-end: #EF5350;   /* Красный конец */
+        --color-message-start: #2196F3; /* Голубой старт */
+        --color-message-end: #42A5F5;   /* Голубой конец */
+    }
+
+    body {
+        background-color: var(--color-background);
+        font-family: var(--font-primary);
+        color: var(--color-text-white);
+    }
+
+    /* Основной контейнер профиля */
+    .profile-card {
+        max-width: 600px;
+        margin: 60px auto 40px auto; /* Отступ сверху больше, снизу - обычный */
+        padding: 2rem;
+        background-color: var(--color-card-bg);
+        border: 1px solid var(--color-accent-purple);
+        border-radius: 16px;
+        box-shadow: var(--shadow-deep), var(--neon-glow-purple);
+        backdrop-filter: blur(8px);
+        text-align: center;
+        color: var(--color-text-white);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .profile-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8), 0 0 25px var(--color-accent-light-purple);
+    }
+
+    /* Аватар */
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 1rem;
+        border: 3px solid var(--color-accent-light-purple); /* Яркая обводка аватара */
+        box-shadow: 0 0 15px rgba(170, 112, 255, 0.7); /* Свечение вокруг аватара */
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .profile-avatar:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 25px rgba(170, 112, 255, 0.9);
+    }
+
+    /* Имя пользователя */
+    .profile-name {
+        font-family: var(--font-heading);
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        color: var(--color-accent-light-purple);
+        text-shadow: var(--neon-glow-purple);
+    }
+
+    /* Контактная информация */
+    .profile-contact-info {
+        color: var(--color-text-light-grey);
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Блок "О себе" */
+    .profile-bio-box {
+        margin-top: 1.5rem;
+        padding: 1.2rem;
+        background-color: rgba(0, 0, 0, 0.2); /* Немного более тёмный фон */
+        border-radius: 12px;
+        color: var(--color-text-white);
+        border: 1px solid var(--color-divider-bg);
+        box-shadow: inset 0 0 10px rgba(138, 43, 226, 0.2);
+    }
+
+    .profile-bio-box strong {
+        color: var(--color-accent-light-purple);
+        text-shadow: 0 0 5px rgba(170, 112, 255, 0.3);
+    }
+
+    .profile-bio-box p {
+        margin-top: 0.8rem;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        color: var(--color-text-light-grey);
+    }
+
+    /* Кнопка "Редактировать профиль" */
+    .edit-profile-btn {
+        margin-top: 1.5rem;
+        display: inline-block; /* Для a */
+        background: linear-gradient(90deg, var(--color-accent-purple), var(--color-accent-light-purple));
+        color: var(--color-text-white);
+        border: none;
+        padding: 0.7rem 1.8rem;
+        border-radius: 8px;
+        font-weight: bold;
+        text-decoration: none;
+        cursor: pointer;
+        box-shadow: 0 0 12px rgba(170, 112, 255, 0.5);
+        transition: background 0.3s, box-shadow 0.3s, transform 0.2s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .edit-profile-btn:hover {
+        background: linear-gradient(90deg, var(--color-accent-light-purple), var(--color-accent-purple));
+        box-shadow: 0 0 18px rgba(170, 112, 255, 0.7), 0 0 25px rgba(138, 43, 226, 0.6);
+        transform: translateY(-3px);
+    }
+
+    /* Статистика подписчиков/подписок */
+    .profile-stats {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--color-divider-bg); /* Разделитель */
+    }
+
+    .profile-stat-item {
+        text-align: center;
+    }
+
+    .profile-stat-item strong {
+        font-size: 1.5rem;
+        color: var(--color-accent-light-purple);
+        text-shadow: var(--text-glow-white);
+    }
+
+    .profile-stat-item p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: var(--color-text-light-grey);
+    }
+
+    /* Кнопки Follow/Unfollow/Message */
+    .profile-actions {
+        margin-top: 2rem;
+        text-align: center;
+        display: flex;
+        justify-content: center; /* Центрируем кнопки */
+        gap: 1rem; /* Пространство между кнопками */
+    }
+
+    .action-button {
+        display: inline-block;
+        border: none;
+        padding: 0.7rem 1.8rem;
+        border-radius: 8px;
+        font-weight: bold;
+        color: white;
+        cursor: pointer;
+        transition: background 0.3s, box-shadow 0.3s, transform 0.2s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .follow-btn {
+        background: linear-gradient(90deg, var(--color-follow-start), var(--color-follow-end));
+        box-shadow: 0 0 12px rgba(76, 175, 80, 0.6);
+    }
+    .follow-btn:hover {
+        background: linear-gradient(90deg, var(--color-follow-end), var(--color-follow-start));
+        box-shadow: 0 0 20px rgba(76, 175, 80, 0.9);
+        transform: translateY(-3px);
+    }
+
+    .unfollow-btn {
+        background: linear-gradient(90deg, var(--color-unfollow-start), var(--color-unfollow-end));
+        box-shadow: 0 0 12px rgba(244, 67, 54, 0.6);
+    }
+    .unfollow-btn:hover {
+        background: linear-gradient(90deg, var(--color-unfollow-end), var(--color-unfollow-start));
+        box-shadow: 0 0 20px rgba(244, 67, 54, 0.9);
+        transform: translateY(-3px);
+    }
+
+    .message-btn {
+        background: linear-gradient(90deg, var(--color-message-start), var(--color-message-end));
+        box-shadow: 0 0 12px rgba(33, 150, 243, 0.6);
+    }
+    .message-btn:hover {
+        background: linear-gradient(90deg, var(--color-message-end), var(--color-message-start));
+        box-shadow: 0 0 20px rgba(33, 150, 243, 0.9);
+        transform: translateY(-3px);
+    }
+
+
+    /* Контейнер для секции "Посты пользователя" */
+    .posts-section-wrapper {
+        position: relative; /* Важно для позиционирования заголовка */
+        margin: 4rem auto 2.5rem auto; /* Отступы для всей секции */
+        max-width: 700px;
+        padding-top: 1px; /* Чтобы border-top был виден */
+    }
+
+    .section-divider {
+        width: 100%;
+        height: 1px; /* Тонкая линия */
+        background: var(--color-divider-bg); /* Цвет линии */
+        box-shadow: 0 0 10px rgba(138, 43, 226, 0.3); /* Легкое свечение */
+        margin: 0; /* Убрать дефолтные отступы hr */
+        border: none; /* Убрать дефолтную границу hr */
+        position: absolute; /* Позиционируем линию */
+        top: 0;
+        left: 0;
+    }
+
+    .section-title {
+        text-align: center;
+        font-family: var(--font-heading);
+        font-size: 2rem;
+        color: var(--color-accent-purple);
+        text-shadow: var(--neon-glow-purple);
+        margin-top: -1.5rem; /* Подтянуть заголовок над линией */
+        background-color: var(--color-background); /* Фон для текста над линией */
+        display: inline-block; /* Чтобы фон был только у текста */
+        padding: 0 1rem; /* Отступы вокруг текста заголовка */
+        position: relative;
+        z-index: 2; /* Чтобы был над линией */
+        left: 50%;
+        transform: translateX(-50%); /* Центрируем текст заголовка */
+        white-space: nowrap; /* Предотвратить перенос строки, если он очень длинный */
+    }
+
+
+
+    .user-posts-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 2.5rem; 
+        margin-top: 2rem; 
+        max-width: 700px; 
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    
+    .profile-post-card {
+        background: var(--color-card-bg);
+        border: 1px solid var(--color-accent-purple);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: var(--shadow-deep), var(--neon-glow-purple);
+        backdrop-filter: blur(8px);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-decoration: none; 
+        color: inherit;
+    }
+
+    .profile-post-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8), 0 0 25px var(--color-accent-light-purple);
+    }
+
+    .profile-post-card h4 {
+        font-family: var(--font-heading);
+        font-size: 1.5rem;
+        color: var(--color-accent-light-purple);
+        margin-bottom: 0.5rem;
+        text-shadow: var(--neon-glow-purple);
+        padding: 1rem 1.5rem 0.5rem 1.5rem; 
+    }
+
+    .profile-post-card p {
+        font-size: 1rem;
+        color: var(--color-text-light-grey);
+        line-height: 1.5;
+        padding: 0 1.5rem;
+        margin-bottom: 0.5rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3; 
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .profile-post-card small {
+        display: block; 
+        color: #B0B0B0;
+        font-size: 0.85rem;
+        font-style: italic;
+        padding: 0 1.5rem 1rem 1.5rem;
+        border-bottom: 1px solid var(--color-divider-bg); 
+    }
+
+    .post-stats {
+        margin-top: 1rem;
+        font-size: 0.9rem;
+        color: var(--color-text-light-grey);
+        display: flex;
+        justify-content: flex-start;
+        gap: 1.5rem; 
+        padding: 0.5rem 1.5rem 1rem 1.5rem;
+    }
+
+    .post-stats span {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .post-stats span svg { 
+        width: 16px;
+        height: 16px;
+        fill: var(--color-accent-light-purple);
+    }
+
+    .post-attachments {
+        margin-top: 1rem;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        padding: 0 1.5rem 1.5rem 1.5rem; 
+        justify-content: center; 
+    }
+
+    .post-attachments img {
+        max-width: 120px; 
+        max-height: 120px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid var(--color-divider-bg);
+        box-shadow: 0 0 8px rgba(138, 43, 226, 0.3);
+    }
+
+    .no-posts-message {
+        text-align: center;
+        color: var(--color-text-light-grey);
+        font-size: 1.1rem;
+        margin-top: 2rem;
+        padding-bottom: 50px; 
+    }
+</style>
+
+<div class="profile-card">
+    <div class="profile-header">
         {% if profile_user.avatar %}
-            <img src="{{ profile_user.avatar.url }}" alt="avatar" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem;">
+            <img src="{{ profile_user.avatar.url }}" alt="Аватар пользователя {{ profile_user.first_name }}" class="profile-avatar">
+        {% else %}
+            {# Placeholder for default avatar if none exists #}
+            <img src="{% static 'images/default_avatar.png' %}" alt="Дефолтный аватар" class="profile-avatar">
         {% endif %}
 
-        <h2 style="margin-bottom: 0.5rem;">{{ profile_user.first_name }} {{ profile_user.last_name }}</h2>
-        <p style="color: #555;">{{ profile_user.email }}</p>
-        <p style="color: #555;">Телефон: {{ profile_user.phone }}</p>
+        <h2 class="profile-name">{{ profile_user.first_name }} {{ profile_user.last_name }}</h2>
+        <p class="profile-contact-info">{{ profile_user.email }}</p>
+        <p class="profile-contact-info">Телефон: {{ profile_user.phone }}</p>
 
-        <!-- О себе -->
         {% if profile_user.bio %}
-            <div style="margin-top: 1rem; padding: 1rem; background-color: #f9f9f9; border-radius: 8px; color: #333;">
+            <div class="profile-bio-box">
                 <strong>О себе:</strong>
-                <p style="margin-top: 0.5rem;">{{ profile_user.bio }}</p>
+                <p>{{ profile_user.bio }}</p>
             </div>
         {% endif %}
 
-        <!-- Кнопка редактирования -->
         {% if user.is_authenticated and user == profile_user %}
-            <div style="margin-top: 1rem;">
-                <a href="{% url 'user:edit_profile' %}">
-                    <button style="background-color: #555; color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 5px; cursor: pointer;">
-                        ✏️ Редактировать профиль
-                    </button>
+            <div style="margin-top: 1.5rem;">
+                <a href="{% url 'user:edit_profile' %}" class="edit-profile-btn">
+                    ✏️ Редактировать профиль
                 </a>
             </div>
         {% endif %}
     </div>
 
-    <div style="display: flex; justify-content: space-around; margin-top: 1rem;">
-        <div>
+    <div class="profile-stats">
+        <div class="profile-stat-item">
             <strong>{{ followers_count }}</strong>
-            <p style="margin: 0; font-size: 0.9rem; color: #666;">Подписчики</p>
+            <p>Подписчики</p>
         </div>
-        <div>
+        <div class="profile-stat-item">
             <strong>{{ following_count }}</strong>
-            <p style="margin: 0; font-size: 0.9rem; color: #666;">Подписки</p>
+            <p>Подписки</p>
         </div>
     </div>
 
     {% if user.is_authenticated and user != profile_user %}
-    <div style="margin-top: 2rem; text-align: center;">
-        <form method="post" action="{% url 'user:toggle_follow' profile_user.id %}" style="display: inline;">
+    <div class="profile-actions">
+        <form method="post" action="{% url 'user:toggle_follow' profile_user.id %}" style="display: inline-block;">
             {% csrf_token %}
-            <button type="submit" style="background-color: {% if is_following %}#f44336{% else %}#4CAF50{% endif %}; color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 5px; cursor: pointer;">
+            <button type="submit" class="action-button {% if is_following %}unfollow-btn{% else %}follow-btn{% endif %}">
                 {% if is_following %}Отписаться{% else %}Подписаться{% endif %}
             </button>
         </form>
 
-        <a href="{% url 'chat:chat_view' other_user_id=profile_user.id %}" style="margin-left: 1rem;">
-            <button style="background-color: #2196F3; color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 5px; cursor: pointer;">
-                Написать сообщение
-            </button>
+        <a href="{% url 'chat:chat_view' other_user_id=profile_user.id %}" class="action-button message-btn">
+            Написать сообщение
         </a>
     </div>
     {% endif %}
 </div>
 
-<hr style="margin: 2rem 0;">
-<h3 style="text-align: center;">Посты пользователя</h3>
+{# Новый HTML-блок для секции заголовка с разделителем #}
+<div class="posts-section-wrapper">
+    <h3 class="section-title">
+        ✨ Публикации {{ profile_user.first_name }} {{ profile_user.last_name }}
+    </h3>
+    <hr class="section-divider">
+</div>
+
 
 {% if posts %}
-<div style="display: flex; flex-direction: column; gap: 1.5rem; margin-top: 1rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+<div class="user-posts-grid">
     {% for post in posts %}
-    <a href="{% url 'news:details' post.id %}" style="text-decoration: none; color: inherit;">
-        <div style="border: 1px solid #ccc; border-radius: 8px; padding: 1rem;">
-            <h4>{{ post.title }}</h4>
-            <p>{{ post.content|truncatewords:25 }}</p>
-            <small style="color: #888;">Опубликовано: {{ post.publication_date }}</small>
-    
-            <div style="margin-top: 0.5rem; font-size: 0.9rem; color: #555;">
-                ❤️ {{ post.likes.count }} лайков | 💬 {{ post.comments.count }} комментариев
-            </div>
-    
-            {% if post.attachments.all %}
-            <div style="margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
-                {% for attachment in post.attachments.all %}
-                <img src="{{ attachment.image.url }}" alt="{{ attachment.name }}" style="max-width: 100px; max-height: 100px; border-radius: 4px;">
-                {% endfor %}
-            </div>
-            {% endif %}
+    <a href="{% url 'news:details' post.id %}" class="profile-post-card">
+        {# Заголовок поста #}
+        <h4>{{ post.title }}</h4>
+        {# Контент поста (обрезанный) #}
+        <p>{{ post.content|truncatewords:25 }}</p>
+        {# Дата публикации #}
+        <small>Опубликовано: {{ post.publication_date }}</small>
+        
+        {# Статистика лайков и комментариев #}
+        <div class="post-stats">
+            <span>❤️ {{ post.likes.count }}</span>
+            <span>💬 {{ post.comments.count }}</span>
         </div>
+        
+        {# Миниатюры изображений поста #}
+        {% if post.attachments.all %}
+        <div class="post-attachments">
+            {% for attachment in post.attachments.all %}
+                <img src="{{ attachment.image.url }}" alt="{{ attachment.name }}">
+            {% endfor %}
+        </div>
+        {% endif %}
     </a>
     {% endfor %}
 </div>
 {% else %}
-<p style="text-align: center; color: #666;">Этот пользователь пока ничего не опубликовал.</p>
+<p class="no-posts-message">Этот пользователь пока ничего не опубликовал.</p>
 {% endif %}
 
 {% endblock %}

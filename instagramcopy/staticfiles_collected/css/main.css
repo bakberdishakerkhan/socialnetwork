@@ -1,0 +1,297 @@
+/* Подключаем современные шрифты */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@500;700&display=swap');
+
+/* --- Переменные для цветов и эффектов --- */
+:root {
+    /* Основные цвета */
+    --color-main-bg-start: #1A0F2E; /* Начальный цвет темно-фиолетового градиента */
+    --color-main-bg-end: #0A0033;   /* Конечный цвет темно-фиолетового градиента (более глубокий) */
+    --color-header-footer-bg: #000000; /* Черный фон для хедера и футера */
+    --color-card-bg: #2C184B; /* Чуть светлее фиолетовый для карточек/панелей */
+    --color-accent-purple: #8A2BE2; /* Насыщенный фиолетовый акцент */
+    --color-text-white: #FFFFFF; /* Белый текст */
+    --color-text-light-grey: #E0E0E0; /* Светло-серый текст для основного контента */
+    --color-divider-bg: #4A0082; /* Темно-фиолетовый для разделителя */
+
+    /* Неоновое свечение (для акцентов) */
+    --neon-glow-purple: 0 0 10px rgba(138, 43, 226, 0.8), 0 0 20px rgba(138, 43, 226, 0.5), 0 0 30px rgba(138, 43, 226, 0.2);
+    --text-glow-white: 0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(255, 255, 255, 0.4);
+    --shadow-deep: 0 8px 25px rgba(0, 0, 0, 0.9); /* Усиленная глубокая тень */
+}
+
+/* --- Общие стили --- */
+body {
+    /* Основной градиентный фон */
+    background: linear-gradient(135deg, var(--color-main-bg-start) 0%, var(--color-main-bg-end) 100%);
+    /* Дополнительные фоновые изображения для футуристического паттерна */
+    background-image:
+        linear-gradient(135deg, var(--color-main-bg-start) 0%, var(--color-main-bg-end) 100%), /* Основной градиент */
+        /* Фоновые радиальные градиенты для "космических" точек/свечений */
+        radial-gradient(circle at 10% 20%, rgba(138, 43, 226, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 70% 80%, rgba(72, 0, 139, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 5%, rgba(138, 43, 226, 0.1) 0%, transparent 30%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: var(--color-text-light-grey);
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    overflow-x: hidden;
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+a {
+    color: var(--color-accent-purple);
+    text-decoration: none;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+a:hover {
+    color: var(--color-text-white);
+    text-shadow: 0 0 8px var(--color-text-white), 0 0 15px rgba(255, 255, 255, 0.3); /* Усиленное свечение */
+}
+a:focus {
+    outline: 2px solid var(--color-accent-purple);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+/* --- Шапка (Header) --- */
+header {
+    background-color: var(--color-header-footer-bg); /* Черный фон хедера */
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--color-accent-purple); /* Темно-фиолетовая нижняя граница */
+    box-shadow: var(--shadow-deep); /* Красивая тень для объема */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    overflow: hidden; /* Важно для псевдоэлементов */
+}
+
+/* Эффект футуристической сетки/узора на фоне хедера */
+header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        linear-gradient(0deg, transparent 24%, rgba(138, 43, 226, 0.05) 25%, rgba(138, 43, 226, 0.05) 26%, transparent 27%, transparent 74%, rgba(138, 43, 226, 0.05) 75%, rgba(138, 43, 226, 0.05) 76%, transparent 77%),
+        linear-gradient(90deg, transparent 24%, rgba(138, 43, 226, 0.05) 25%, rgba(138, 43, 226, 0.05) 26%, transparent 27%, transparent 74%, rgba(138, 43, 226, 0.05) 75%, rgba(138, 43, 226, 0.05) 76%, transparent 77%);
+    background-size: 50px 50px; /* Размер ячейки сетки */
+    opacity: 0.2; /* Полупрозрачность */
+    z-index: -1; /* Помещаем под содержимое хедера */
+    pointer-events: none; /* Не блокируем события мыши */
+    animation: headerGridPulse 8s infinite alternate ease-in-out; /* Легкая анимация пульсации */
+}
+
+@keyframes headerGridPulse {
+    0% { opacity: 0.15; transform: scale(1); }
+    50% { opacity: 0.25; transform: scale(1.01); }
+    100% { opacity: 0.15; transform: scale(1); }
+}
+
+
+.header-logo-link {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    position: relative; /* Для Z-index и свечения */
+    z-index: 1; /* Выше чем before */
+}
+
+header h1 {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    font-size: 34px;
+    color: var(--color-text-white);
+    text-shadow: var(--text-glow-white);
+    letter-spacing: 2px;
+    font-weight: 700;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+header h1:hover {
+    color: var(--color-accent-purple);
+    text-shadow: var(--neon-glow-purple);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    position: relative;
+    z-index: 1; /* Выше чем before */
+}
+
+.header-actions a, .header-actions button {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.header-actions a img,
+.header-actions button img {
+    width: 32px;
+    height: 32px;
+    /* Иконки становятся белыми (инвертируются) и получают мягкое фиолетовое свечение */
+    filter: brightness(0) invert(1) drop-shadow(0 0 5px var(--color-accent-purple));
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+.header-actions a img:hover,
+.header-actions button img:hover {
+    transform: scale(1.15);
+    filter: brightness(0) invert(1) drop-shadow(0 0 15px var(--color-accent-purple)), drop-shadow(0 0 25px rgba(138, 43, 226, 0.4)); /* Усиленное неоновое свечение */
+}
+
+.divider {
+    width: 2px;
+    height: 35px;
+    background-color: var(--color-divider-bg);
+    box-shadow: 0 0 12px var(--color-accent-purple), 0 0 20px rgba(138, 43, 226, 0.5); /* Более выраженное свечение */
+    border-radius: 1px;
+}
+
+/* --- Навигация (Nav) --- */
+nav {
+    background-color: var(--color-card-bg); /* Более светлый фиолетовый фон для навигации */
+    padding: 15px 30px;
+    text-align: center;
+    border-bottom: 1px solid var(--color-accent-purple);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+nav button {
+    background: linear-gradient(45deg, #7a2be2, #aa70ff); /* Градиентная кнопка */
+    color: var(--color-text-white);
+    border: none;
+    padding: 12px 30px;
+    margin: 5px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow:
+        0 0 10px rgba(138, 43, 226, 0.7),
+        0 0 25px rgba(170, 112, 255, 0.5); /* Более выраженное свечение */
+    transition: background 0.4s ease, box-shadow 0.4s ease, transform 0.25s ease;
+}
+nav button:hover {
+    background: linear-gradient(45deg, #aa70ff, #7a2be2); /* Обратный градиент при наведении */
+    box-shadow:
+        0 0 18px rgba(170, 112, 255, 1),
+        0 0 40px rgba(138, 43, 226, 0.9); /* Усиленное свечение */
+    transform: translateY(-4px); /* Эффект "поднятия" */
+}
+nav button:focus {
+    outline: 2px solid var(--color-accent-purple);
+    outline-offset: 4px;
+}
+
+.greeting {
+    color: var(--color-text-white);
+    text-shadow: var(--text-glow-white);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+/* --- Основной контент (Main) --- */
+main {
+    padding: 50px 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: calc(100vh - 250px);
+}
+
+/* --- Карточки/панели (для будущих постов, профилей и т.д.) --- */
+.card { /* Используйте этот класс для блоков контента */
+    background-color: var(--color-card-bg);
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow:
+        0 0 8px rgba(138, 43, 226, 0.6), /* Мягкое фиолетовое свечение по периметру */
+        0 10px 20px rgba(0, 0, 0, 0.7); /* Глубокая тень вниз */
+    color: var(--color-text-white);
+    margin-bottom: 30px;
+    transition: box-shadow 0.4s ease, transform 0.3s ease;
+}
+
+.card:hover {
+    box-shadow:
+        0 0 15px rgba(138, 43, 226, 0.9), /* Усиленное свечение */
+        0 15px 30px rgba(138, 43, 226, 0.7); /* Более выраженная тень при наведении */
+    transform: translateY(-6px); /* Подъем карточки */
+}
+
+/* --- Футер (Footer) --- */
+footer {
+    background-color: var(--color-header-footer-bg); /* Черный фон футера */
+    text-align: center;
+    padding: 20px;
+    margin-top: 60px;
+    color: var(--color-text-light-grey);
+    border-top: 1px solid var(--color-accent-purple);
+    box-shadow:
+        0 -4px 20px rgba(138, 43, 226, 0.6); /* Фиолетовое свечение снизу */
+    font-size: 0.85em;
+}
+
+/* --- Адаптивность --- */
+@media (max-width: 992px) {
+    header h1 {
+        font-size: 30px;
+    }
+    .header-actions {
+        gap: 20px;
+    }
+    main {
+        padding: 40px 20px;
+    }
+}
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px;
+    }
+    .header-actions {
+        margin-top: 15px;
+        flex-direction: row;
+        justify-content: center;
+        width: 100%;
+        gap: 15px;
+    }
+    header h1 {
+        font-size: 26px;
+    }
+    nav button {
+        padding: 8px 20px;
+        font-size: 0.8em;
+    }
+    main {
+        padding: 30px 15px;
+    }
+}
+@media (max-width: 480px) {
+    .header-actions a img,
+    .header-actions button img {
+        width: 28px;
+        height: 28px;
+    }
+    nav button {
+        display: block;
+        width: calc(100% - 30px);
+        margin: 10px auto;
+    }
+    header h1 {
+        font-size: 22px;
+    }
+}
