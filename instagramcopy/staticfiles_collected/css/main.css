@@ -1,44 +1,28 @@
-/* Подключаем современные шрифты */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@500;700&display=swap');
 
-/* --- Переменные для цветов и эффектов --- */
 :root {
-    /* Основные цвета */
-    --color-main-bg-start: #1A0F2E; /* Начальный цвет темно-фиолетового градиента */
-    --color-main-bg-end: #0A0033;   /* Конечный цвет темно-фиолетового градиента (более глубокий) */
-    --color-header-footer-bg: #000000; /* Черный фон для хедера и футера */
-    --color-card-bg: #2C184B; /* Чуть светлее фиолетовый для карточек/панелей */
-    --color-accent-purple: #8A2BE2; /* Насыщенный фиолетовый акцент */
-    --color-text-white: #FFFFFF; /* Белый текст */
-    --color-text-light-grey: #E0E0E0; /* Светло-серый текст для основного контента */
-    --color-divider-bg: #4A0082; /* Темно-фиолетовый для разделителя */
+    --color-main-bg-start: #1A0F2E;
+    --color-main-bg-end: #0A0033;
+    --color-header-footer-bg: #000000;
+    --color-card-bg: #2C184B;
+    --color-accent-purple: #8A2BE2;
+    --color-text-white: #FFFFFF;
+    --color-text-light-grey: #E0E0E0;
+    --color-divider-bg: #4A0082;
 
-    /* Неоновое свечение (для акцентов) */
     --neon-glow-purple: 0 0 10px rgba(138, 43, 226, 0.8), 0 0 20px rgba(138, 43, 226, 0.5), 0 0 30px rgba(138, 43, 226, 0.2);
     --text-glow-white: 0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(255, 255, 255, 0.4);
-    --shadow-deep: 0 8px 25px rgba(0, 0, 0, 0.9); /* Усиленная глубокая тень */
+    --shadow-deep: 0 8px 25px rgba(0, 0, 0, 0.9);
 }
 
-/* --- Общие стили --- */
 body {
-    /* Основной градиентный фон */
-    background: linear-gradient(135deg, var(--color-main-bg-start) 0%, var(--color-main-bg-end) 100%);
-    /* Дополнительные фоновые изображения для футуристического паттерна */
-    background-image:
-        linear-gradient(135deg, var(--color-main-bg-start) 0%, var(--color-main-bg-end) 100%), /* Основной градиент */
-        /* Фоновые радиальные градиенты для "космических" точек/свечений */
-        radial-gradient(circle at 10% 20%, rgba(138, 43, 226, 0.15) 0%, transparent 40%),
-        radial-gradient(circle at 70% 80%, rgba(72, 0, 139, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 40% 5%, rgba(138, 43, 226, 0.1) 0%, transparent 30%);
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    color: var(--color-text-light-grey);
-    font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
-    line-height: 1.6;
-    overflow-x: hidden;
-    transition: background-color 0.4s ease, color 0.4s ease;
+    background: linear-gradient(100deg, #1a0033, #4300a1, #000000);
+    background-size: 400% 400%;
+    animation: gradientMove 15s ease infinite;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 a {
@@ -48,7 +32,7 @@ a {
 }
 a:hover {
     color: var(--color-text-white);
-    text-shadow: 0 0 8px var(--color-text-white), 0 0 15px rgba(255, 255, 255, 0.3); /* Усиленное свечение */
+    text-shadow: 0 0 8px var(--color-text-white), 0 0 15px rgba(255, 255, 255, 0.3);
 }
 a:focus {
     outline: 2px solid var(--color-accent-purple);
@@ -56,22 +40,20 @@ a:focus {
     border-radius: 4px;
 }
 
-/* --- Шапка (Header) --- */
 header {
-    background-color: var(--color-header-footer-bg); /* Черный фон хедера */
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
     padding: 20px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 2px solid var(--color-accent-purple); /* Темно-фиолетовая нижняя граница */
-    box-shadow: var(--shadow-deep); /* Красивая тень для объема */
+    border-bottom: 2px solid var(--color-accent-purple);
+    box-shadow: var(--shadow-deep);
     position: sticky;
     top: 0;
     z-index: 1000;
-    overflow: hidden; /* Важно для псевдоэлементов */
+    overflow: hidden;
 }
-
-/* Эффект футуристической сетки/узора на фоне хедера */
 header::before {
     content: '';
     position: absolute;
@@ -82,28 +64,24 @@ header::before {
     background-image:
         linear-gradient(0deg, transparent 24%, rgba(138, 43, 226, 0.05) 25%, rgba(138, 43, 226, 0.05) 26%, transparent 27%, transparent 74%, rgba(138, 43, 226, 0.05) 75%, rgba(138, 43, 226, 0.05) 76%, transparent 77%),
         linear-gradient(90deg, transparent 24%, rgba(138, 43, 226, 0.05) 25%, rgba(138, 43, 226, 0.05) 26%, transparent 27%, transparent 74%, rgba(138, 43, 226, 0.05) 75%, rgba(138, 43, 226, 0.05) 76%, transparent 77%);
-    background-size: 50px 50px; /* Размер ячейки сетки */
-    opacity: 0.2; /* Полупрозрачность */
-    z-index: -1; /* Помещаем под содержимое хедера */
-    pointer-events: none; /* Не блокируем события мыши */
-    animation: headerGridPulse 8s infinite alternate ease-in-out; /* Легкая анимация пульсации */
+    background-size: 50px 50px;
+    opacity: 0.2;
+    z-index: -1;
+    pointer-events: none;
+    animation: headerGridPulse 8s infinite alternate ease-in-out;
 }
-
 @keyframes headerGridPulse {
     0% { opacity: 0.15; transform: scale(1); }
     50% { opacity: 0.25; transform: scale(1.01); }
     100% { opacity: 0.15; transform: scale(1); }
 }
-
-
 .header-logo-link {
     text-decoration: none;
     display: flex;
     align-items: center;
-    position: relative; /* Для Z-index и свечения */
-    z-index: 1; /* Выше чем before */
+    position: relative;
+    z-index: 1;
 }
-
 header h1 {
     font-family: 'Montserrat', sans-serif;
     margin: 0;
@@ -118,15 +96,13 @@ header h1:hover {
     color: var(--color-accent-purple);
     text-shadow: var(--neon-glow-purple);
 }
-
 .header-actions {
     display: flex;
     align-items: center;
     gap: 30px;
     position: relative;
-    z-index: 1; /* Выше чем before */
+    z-index: 1;
 }
-
 .header-actions a, .header-actions button {
     display: flex;
     align-items: center;
@@ -135,40 +111,35 @@ header h1:hover {
     background: none;
     cursor: pointer;
 }
-
 .header-actions a img,
 .header-actions button img {
     width: 32px;
     height: 32px;
-    /* Иконки становятся белыми (инвертируются) и получают мягкое фиолетовое свечение */
     filter: brightness(0) invert(1) drop-shadow(0 0 5px var(--color-accent-purple));
     transition: transform 0.3s ease, filter 0.3s ease;
 }
 .header-actions a img:hover,
 .header-actions button img:hover {
     transform: scale(1.15);
-    filter: brightness(0) invert(1) drop-shadow(0 0 15px var(--color-accent-purple)), drop-shadow(0 0 25px rgba(138, 43, 226, 0.4)); /* Усиленное неоновое свечение */
+    filter: brightness(0) invert(1) drop-shadow(0 0 15px var(--color-accent-purple)), drop-shadow(0 0 25px rgba(138, 43, 226, 0.4));
 }
-
 .divider {
     width: 2px;
     height: 35px;
     background-color: var(--color-divider-bg);
-    box-shadow: 0 0 12px var(--color-accent-purple), 0 0 20px rgba(138, 43, 226, 0.5); /* Более выраженное свечение */
+    box-shadow: 0 0 12px var(--color-accent-purple), 0 0 20px rgba(138, 43, 226, 0.5);
     border-radius: 1px;
 }
 
-/* --- Навигация (Nav) --- */
 nav {
-    background-color: var(--color-card-bg); /* Более светлый фиолетовый фон для навигации */
+    background-color: var(--color-card-bg);
     padding: 15px 30px;
     text-align: center;
     border-bottom: 1px solid var(--color-accent-purple);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
 }
-
 nav button {
-    background: linear-gradient(45deg, #7a2be2, #aa70ff); /* Градиентная кнопка */
+    background: linear-gradient(45deg, #7a2be2, #aa70ff);
     color: var(--color-text-white);
     border: none;
     padding: 12px 30px;
@@ -178,23 +149,18 @@ nav button {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
-    box-shadow:
-        0 0 10px rgba(138, 43, 226, 0.7),
-        0 0 25px rgba(170, 112, 255, 0.5); /* Более выраженное свечение */
+    box-shadow: 0 0 10px rgba(138, 43, 226, 0.7), 0 0 25px rgba(170, 112, 255, 0.5);
     transition: background 0.4s ease, box-shadow 0.4s ease, transform 0.25s ease;
 }
 nav button:hover {
-    background: linear-gradient(45deg, #aa70ff, #7a2be2); /* Обратный градиент при наведении */
-    box-shadow:
-        0 0 18px rgba(170, 112, 255, 1),
-        0 0 40px rgba(138, 43, 226, 0.9); /* Усиленное свечение */
-    transform: translateY(-4px); /* Эффект "поднятия" */
+    background: linear-gradient(45deg, #aa70ff, #7a2be2);
+    box-shadow: 0 0 18px rgba(170, 112, 255, 1), 0 0 40px rgba(138, 43, 226, 0.9);
+    transform: translateY(-4px);
 }
 nav button:focus {
     outline: 2px solid var(--color-accent-purple);
     outline-offset: 4px;
 }
-
 .greeting {
     color: var(--color-text-white);
     text-shadow: var(--text-glow-white);
@@ -203,7 +169,6 @@ nav button:focus {
     font-weight: 600;
 }
 
-/* --- Основной контент (Main) --- */
 main {
     padding: 50px 30px;
     max-width: 1200px;
@@ -211,50 +176,35 @@ main {
     min-height: calc(100vh - 250px);
 }
 
-/* --- Карточки/панели (для будущих постов, профилей и т.д.) --- */
-.card { /* Используйте этот класс для блоков контента */
+.card {
     background-color: var(--color-card-bg);
     padding: 25px 30px;
     border-radius: 12px;
-    box-shadow:
-        0 0 8px rgba(138, 43, 226, 0.6), /* Мягкое фиолетовое свечение по периметру */
-        0 10px 20px rgba(0, 0, 0, 0.7); /* Глубокая тень вниз */
+    box-shadow: 0 0 8px rgba(138, 43, 226, 0.6), 0 10px 20px rgba(0, 0, 0, 0.7);
     color: var(--color-text-white);
     margin-bottom: 30px;
     transition: box-shadow 0.4s ease, transform 0.3s ease;
 }
-
 .card:hover {
-    box-shadow:
-        0 0 15px rgba(138, 43, 226, 0.9), /* Усиленное свечение */
-        0 15px 30px rgba(138, 43, 226, 0.7); /* Более выраженная тень при наведении */
-    transform: translateY(-6px); /* Подъем карточки */
+    box-shadow: 0 0 15px rgba(138, 43, 226, 0.9), 0 15px 30px rgba(138, 43, 226, 0.7);
+    transform: translateY(-6px);
 }
 
-/* --- Футер (Footer) --- */
 footer {
-    background-color: var(--color-header-footer-bg); /* Черный фон футера */
+    background-color: var(--color-header-footer-bg);
     text-align: center;
     padding: 20px;
     margin-top: 60px;
     color: var(--color-text-light-grey);
     border-top: 1px solid var(--color-accent-purple);
-    box-shadow:
-        0 -4px 20px rgba(138, 43, 226, 0.6); /* Фиолетовое свечение снизу */
+    box-shadow: 0 -4px 20px rgba(138, 43, 226, 0.6);
     font-size: 0.85em;
 }
 
-/* --- Адаптивность --- */
 @media (max-width: 992px) {
-    header h1 {
-        font-size: 30px;
-    }
-    .header-actions {
-        gap: 20px;
-    }
-    main {
-        padding: 40px 20px;
-    }
+    header h1 { font-size: 30px; }
+    .header-actions { gap: 20px; }
+    main { padding: 40px 20px; }
 }
 @media (max-width: 768px) {
     header {
@@ -269,29 +219,173 @@ footer {
         width: 100%;
         gap: 15px;
     }
-    header h1 {
-        font-size: 26px;
-    }
+    header h1 { font-size: 26px; }
     nav button {
         padding: 8px 20px;
         font-size: 0.8em;
     }
-    main {
-        padding: 30px 15px;
-    }
+    main { padding: 30px 15px; }
 }
 @media (max-width: 480px) {
-    .header-actions a img,
-    .header-actions button img {
-        width: 28px;
-        height: 28px;
-    }
+    header h1 { font-size: 22px; }
     nav button {
-        display: block;
-        width: calc(100% - 30px);
-        margin: 10px auto;
+        margin: 5px 8px;
+        padding: 6px 16px;
     }
-    header h1 {
-        font-size: 22px;
-    }
+}
+
+.edit-post-container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: var(--color-card-bg);
+    border-radius: 15px;
+    box-shadow: var(--shadow-deep), var(--neon-glow-purple);
+    color: var(--color-text-white);
+    font-family: 'Roboto', sans-serif;
+    border: 1px solid var(--color-accent-purple);
+}
+
+.edit-post-container h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: var(--color-accent-purple);
+    text-shadow: var(--neon-glow-purple);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 32px;
+    letter-spacing: 1px;
+}
+
+.edit-post-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.edit-post-form label {
+    font-weight: bold;
+    color: var(--color-text-light-grey);
+    margin-bottom: 5px;
+    display: block;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+}
+
+.edit-post-form input[type="text"],
+.edit-post-form textarea {
+    width: calc(100% - 20px);
+    padding: 10px;
+    background-color: #1a0f2e;
+    border: 1px solid var(--color-accent-purple);
+    border-radius: 8px;
+    color: var(--color-text-white);
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    box-shadow: inset 0 0 5px rgba(138, 43, 226, 0.4);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.edit-post-form input[type="text"]:focus,
+.edit-post-form textarea:focus {
+    border-color: var(--color-text-white);
+    box-shadow: inset 0 0 8px rgba(138, 43, 226, 0.7), 0 0 10px rgba(138, 43, 226, 0.5);
+    outline: none;
+}
+
+.edit-post-form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.edit-post-form input[type="file"] {
+    color: var(--color-text-white);
+    background-color: #2C184B;
+    border: 1px solid var(--color-accent-purple);
+    border-radius: 8px;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.edit-post-form input[type="file"]::file-selector-button {
+    background: linear-gradient(45deg, #7a2be2, #aa70ff);
+    color: var(--color-text-white);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 0 10px rgba(138, 43, 226, 0.7), 0 0 25px rgba(170, 112, 255, 0.5);
+    transition: background 0.4s ease, box-shadow 0.4s ease, transform 0.25s ease;
+}
+
+.edit-post-form input[type="file"]::file-selector-button:hover {
+    background: linear-gradient(45deg, #aa70ff, #7a2be2);
+    box-shadow: 0 0 18px rgba(170, 112, 255, 1), 0 0 40px rgba(138, 43, 226, 0.9);
+    transform: translateY(-4px);
+}
+
+.current-images-section p {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: var(--color-text-light-grey);
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+}
+
+.image-checkbox-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.image-checkbox-item {
+    position: relative;
+    border: 1px solid var(--color-accent-purple);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.image-checkbox-item:hover {
+    box-shadow: 0 0 15px rgba(138, 43, 226, 0.8);
+    transform: translateY(-2px);
+}
+
+.image-checkbox-item input[type="checkbox"] {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    transform: scale(1.3);
+    z-index: 2;
+    accent-color: var(--color-accent-purple);
+    cursor: pointer;
+}
+
+.image-checkbox-item img {
+    width: 120px;
+    height: 100px;
+    object-fit: cover;
+    filter: brightness(0.85);
+    display: block;
+}
+
+.edit-post-submit-button {
+    padding: 12px;
+    background: linear-gradient(135deg, var(--color-accent-purple), #AA70FF); 
+    color: var(--color-text-white);
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 0 12px rgba(138, 43, 226, 0.6);
+}
+
+.edit-post-submit-button:hover {
+    background: linear-gradient(135deg, #AA70FF, var(--color-accent-purple));
+    box-shadow: 0 0 20px rgba(138, 43, 226, 0.9), 0 0 30px rgba(170, 112, 255, 0.7);
+    transform: translateY(-3px);
 }

@@ -12,25 +12,36 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 import os
 from pathlib import Path
+import dj_database_url # Хорошо, что используете dj_database_url для гибкости!
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 AUTH_USER_MODEL = 'user.User'
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-+&gom8d23j6z3!cm1+#a=s#+dge%)-=!&xare9o0+m9@=meey7'
+# Лучше вынести SECRET_KEY в переменную окружения для продакшена.
+# На PythonAnywhere вы можете установить ее в файле wsgi.py или в разделе "Environment variables" вашей веб-аппликации.
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-+&gom8d23j6z3!cm1+#a=s#+dge%)-=!&xare9o0+m9@=meey7')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = False # Отлично, что DEBUG = False для продакшена.
 
-ALLOWED_HOSTS = ['.onrender.com']
+# === ОБНОВЛЕНИЕ 1: ALLOWED_HOSTS для PythonAnywhere ===
+# Вы уже обновили это, отлично. Домен Render оставил, если он вам еще нужен.
+ALLOWED_HOSTS = ['.onrender.com', 'bakberdi.pythonanywhere.com', 'www.bakberdi.pythonanywhere.com']
 
+
+# === ОБНОВЛЕНИЕ 2: CHANNEL_LAYERS для продакшена ===
+# Напоминание: InMemoryChannelLayer не для продакшена, но для начала сойдет.
+# Если вы решите использовать Redis, убедитесь, что 'channels_redis' в requirements.txt.
+# Для бесплатного аккаунта PythonAnywhere, вам, скорее всего, придется использовать внешний Redis-сервис.
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",  
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
     },
 }
 
@@ -49,6 +60,7 @@ INSTALLED_APPS = [
     'channels',
     'chat',
     'widget_tweaks',
+    'whitenoise.runserver_nostatic',
 ]
 
 ASGI_APPLICATION = 'instagramcopy.asgi.application'
@@ -88,20 +100,29 @@ WSGI_APPLICATION = 'instagramcopy.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# === ОБНОВЛЕНИЕ 3: Настройка DATABASES для PythonAnywhere MySQL ===
+# Основываясь на вашем имени пользователя 'bakberdi' и стандартном формате PythonAnywhere.
+# Убедитесь, что 'sbndb' (или 'sbndatabase' если вы так назвали) это точное имя вашей базы данных на PythonAnywhere.
+# Хост 'bakberdi.mysql.pythonany-services.com' - это стандартный формат.
+# Пароль берется из переменной окружения.
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',  
-        'NAME': 'mydatabase',  
-        'USER': 'root',  
-        'PASSWORD': '20070221bak', 
-        'HOST': 'localhost',  
-        'PORT': '3306',  
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-        },
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'bakberdi$sbndb', # Или 'bakberdi$sbndatabase', в зависимости от того, как вы назвали базу на PA. ПРОВЕРЬТЕ ТОЧНОЕ ИМЯ В РАЗДЕЛЕ DATABASES НА PA!
+        'USER': 'bakberdi', # Ваше имя пользователя PythonAnywhere
+        'PASSWORD': os.environ.get('MYSQL_PASSWORD'), # Пароль к вашей MySQL базе данных, установленный как переменная окружения на PA
+        'HOST': 'bakberdi.mysql.pythonany-services.com', # Этот хост вы найдете в разделе 'Databases' на PythonAnywhere
+        'PORT': '', # Обычно пустой
     }
 }
-
+# Убедитесь, что в вашем requirements.txt есть 'mysqlclient' или 'PyMySQL'.
+# Если вы все же хотите использовать dj_database_url с PythonAnywhere MySQL,
+# строка должна быть такой (убедитесь, что 'bakberdi$sbndb' - это точное имя базы данных):
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=f'mysql://bakberdi:{os.environ.get("MYSQL_PASSWORD")}@bakberdi.mysql.pythonany-services.com:3306/bakberdi$sbndb'
+#     )
+# }
 
 
 # Password validation
@@ -154,14 +175,24 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+# === ОБНОВЛЕНИЕ 4: Настройки почты ===
+# Пароли и логины для почты также лучше выносить в переменные окружения.
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.mail.ru'
 EMAIL_PORT = 465
-EMAIL_USE_TLS = False
-EMAIL_USE_SSL = True
-EMAIL_HOST_USER = 'bakberdishakerhan@mail.ru'
-EMAIL_HOST_PASSWORD = '0xWy7rXyqtgVW0gY2yVz'
+EMAIL_USE_TLS = False # Оставьте False, если используете SSL
+EMAIL_USE_SSL = True # Оставьте True, если используете SSL
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'bakberdishakerhan@mail.ru')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '0xWy7rXyqtgVW0gY2yVz') # ОЧЕНЬ ВАЖНО: ЗАМЕНИТЕ НА ПЕРЕМЕННУЮ ОКРУЖЕНИЯ НА PYTHONANYWHERE!
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 LOGIN_URL = '/auth/login/'
 
+# === ДОПОЛНИТЕЛЬНО: Переменные окружения, которые нужно установить на PythonAnywhere ===
+# Перейдите в раздел "Web" -> "Environment variables" вашего веб-приложения на PythonAnywhere
+# и добавьте следующие записи:
+#
+# DJANGO_SECRET_KEY = 'ваш_очень_сложный_секретный_ключ_генерировать_новый!'
+# MYSQL_PASSWORD = 'ваш_пароль_для_mysql_на_pythonanywhere_из_раздела_Databases'
+# EMAIL_HOST_USER = 'bakberdishakerhan@mail.ru'
+# EMAIL_HOST_PASSWORD = '0xWy7rXyqtgVW0gY2yVz' # Это должен быть ПАРОЛЬ ПРИЛОЖЕНИЯ, сгенерированный в настройках безопасности вашей почты Mail.ru
