@@ -30,16 +30,13 @@ itsdangerous==2.2.0
 Jinja2==3.1.6
 kiwisolver==1.4.8
 MarkupSafe==3.0.2
-matplotlib==3.10.3
 msgpack==1.1.0
 mysqlclient==2.2.7
 narwhals==1.42.0
 nest-asyncio==1.6.0
 numpy==2.3.0
 packaging==25.0
-pandas==2.3.0
 pillow==11.1.0
-plotly==6.1.2
 pyasn1==0.6.1
 pyasn1_modules==0.4.2
 pycparser==2.22
@@ -52,7 +49,6 @@ pytz==2025.2
 redis==5.2.1
 requests==2.32.4
 retrying==1.3.4
-seaborn==0.13.2
 service-identity==24.2.0
 setuptools==80.0.0
 six==1.17.0
